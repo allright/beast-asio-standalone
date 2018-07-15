@@ -7,10 +7,9 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_DETAIL_CONST_CONTAINER_HPP
-#define BOOST_BEAST_UNIT_TEST_DETAIL_CONST_CONTAINER_HPP
+#ifndef BEAST_UNIT_TEST_DETAIL_CONST_CONTAINER_HPP
+#define BEAST_UNIT_TEST_DETAIL_CONST_CONTAINER_HPP
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 namespace detail {
@@ -90,6 +89,5 @@ public:
 } // detail
 } // unit_test
 } // beast
-} // boost
 
 #endif

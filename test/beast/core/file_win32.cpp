@@ -8,16 +8,15 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/file_win32.hpp>
+#include <beast/core/file_win32.hpp>
 
-#if BOOST_BEAST_USE_WIN32_FILE
+#if BEAST_USE_WIN32_FILE
 
 #include "file_test.hpp"
 
-#include <boost/beast/core/type_traits.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/type_traits.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 
 BOOST_STATIC_ASSERT(! std::is_copy_constructible<file_win32>::value);
@@ -36,6 +35,5 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,file_win32);
 
 } // beast
-} // boost
 
 #endif

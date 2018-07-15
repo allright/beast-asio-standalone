@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_DSTREAM_HPP
-#define BOOST_BEAST_UNIT_TEST_DSTREAM_HPP
+#ifndef BEAST_UNIT_TEST_DSTREAM_HPP
+#define BEAST_UNIT_TEST_DSTREAM_HPP
 
 #include <boost/config.hpp>
 #include <ios>
@@ -22,7 +22,6 @@
 #include <boost/winapi/debugapi.hpp>
 #endif
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -125,6 +124,5 @@ using dwstream = std::wostream&;
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

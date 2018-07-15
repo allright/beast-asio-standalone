@@ -248,7 +248,7 @@ to update to the latest Boost release.
   removed in the next version.
   Actions required: Change user-defined instances of __BodyReader__ or
   __BodyWriter__ constructor signatures to the two-argument form.
-  Alternatively. define the macro `BOOST_BEAST_ALLOW_DEPRECATED` in
+  Alternatively. define the macro `BEAST_ALLOW_DEPRECATED` in
   the project (which will cause both the new and the deprecated
   signatures to be accepted).
 

@@ -7,16 +7,15 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_CORE_FILE_TEST_HPP
-#define BOOST_BEAST_TEST_CORE_FILE_TEST_HPP
+#ifndef BEAST_TEST_CORE_FILE_TEST_HPP
+#define BEAST_TEST_CORE_FILE_TEST_HPP
 
-#include <boost/beast/core/type_traits.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/type_traits.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <boost/config.hpp>
 #include <boost/filesystem.hpp>
 #include <string>
 
-namespace boost {
 namespace beast {
 
 template<class File>
@@ -121,6 +120,5 @@ doTestFile(beast::unit_test::suite& test)
 }
 
 } // beast
-} // boost
 
 #endif

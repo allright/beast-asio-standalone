@@ -14,7 +14,7 @@ GroupSources(test/beast/http "/")
 GroupSources(test/bench/parser "/")
 
 add_executable (bench-parser
-    ${BOOST_BEAST_FILES}
+    ${BEAST_FILES}
     ${EXTRAS_FILES}
     ${TEST_MAIN}
     Jamfile

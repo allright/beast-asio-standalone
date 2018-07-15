@@ -8,24 +8,23 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/read.hpp>
+#include <beast/http/read.hpp>
 
 #include "test_parser.hpp"
 
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/core/flat_static_buffer.hpp>
-#include <boost/beast/http/fields.hpp>
-#include <boost/beast/http/dynamic_body.hpp>
-#include <boost/beast/http/parser.hpp>
-#include <boost/beast/http/string_body.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/test/yield_to.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/strand.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/core/flat_static_buffer.hpp>
+#include <beast/http/fields.hpp>
+#include <beast/http/dynamic_body.hpp>
+#include <beast/http/parser.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/test/yield_to.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/io_context.hpp>
+#include <asio/strand.hpp>
 #include <atomic>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -38,8 +37,8 @@ public:
     void
     failMatrix(char const* s, yield_context do_yield)
     {
-        using boost::asio::buffer;
-        using boost::asio::buffer_copy;
+        using asio::buffer;
+        using asio::buffer_copy;
         static std::size_t constexpr limit = 100;
         std::size_t n;
         auto const len = strlen(s);
@@ -373,7 +372,7 @@ public:
         {
             // Make sure handlers are not destroyed
             // after calling io_context::stop
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             test::stream ts{ioc,
                 "GET / HTTP/1.1\r\n\r\n"};
             BEAST_EXPECT(handler::count() == 0);
@@ -392,7 +391,7 @@ public:
             // Make sure uninvoked handlers are
             // destroyed when calling ~io_context
             {
-                boost::asio::io_context ioc;
+                asio::io_context ioc;
                 test::stream ts{ioc,
                     "GET / HTTP/1.1\r\n\r\n"};
                 BEAST_EXPECT(handler::count() == 0);
@@ -431,7 +430,7 @@ public:
     void
     readgrind(string_view s, Pred&& pred)
     {
-        using boost::asio::buffer;
+        using asio::buffer;
         for(std::size_t n = 1; n < s.size() - 1; ++n)
         {
             Parser p;
@@ -497,24 +496,24 @@ public:
         // breakpoint in asio_handler_invoke to make sure
         // it is instantiated.
         {
-            boost::asio::io_context ioc;
-            boost::asio::io_service::strand s{ioc};
+            asio::io_context ioc;
+            asio::io_context::strand s{ioc};
             test::stream ts{ioc};
             flat_buffer b;
             request_parser<dynamic_body> p;
             async_read_some(ts, b, p, s.wrap(copyable_handler{}));
         }
         {
-            boost::asio::io_context ioc;
-            boost::asio::io_service::strand s{ioc};
+            asio::io_context ioc;
+            asio::io_context::strand s{ioc};
             test::stream ts{ioc};
             flat_buffer b;
             request_parser<dynamic_body> p;
             async_read(ts, b, p, s.wrap(copyable_handler{}));
         }
         {
-            boost::asio::io_context ioc;
-            boost::asio::io_service::strand s{ioc};
+            asio::io_context ioc;
+            asio::io_context::strand s{ioc};
             test::stream ts{ioc};
             flat_buffer b;
             request<dynamic_body> m;
@@ -552,4 +551,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,read);
 
 } // http
 } // beast
-} // boost

@@ -8,11 +8,10 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/websocket/stream.hpp>
+#include <beast/websocket/stream.hpp>
 
 #include "test.hpp"
 
-namespace boost {
 namespace beast {
 namespace websocket {
 
@@ -113,7 +112,7 @@ public:
     run() override
     {
         BOOST_STATIC_ASSERT(std::is_constructible<
-            stream<test::stream>, boost::asio::io_context&>::value);
+            stream<test::stream>, asio::io_context&>::value);
 
         BOOST_STATIC_ASSERT(std::is_move_constructible<
             stream<test::stream>>::value);
@@ -143,4 +142,3 @@ BEAST_DEFINE_TESTSUITE(beast,websocket,stream);
 
 } // websocket
 } // beast
-} // boost

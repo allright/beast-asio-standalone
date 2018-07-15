@@ -17,10 +17,10 @@
 
 #include <example/common/session_alloc.hpp>
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/beast/unit_test/dstream.hpp>
-#include <boost/asio.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <beast/unit_test/dstream.hpp>
+#include <asio.hpp>
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
@@ -32,23 +32,23 @@
 #include <thread>
 #include <vector>
 
-namespace asio = boost::asio;
-namespace ip = boost::asio::ip;
-using tcp = boost::asio::ip::tcp;
-namespace ws = boost::beast::websocket;
+namespace asio = asio;
+namespace ip = asio::ip;
+using tcp = asio::ip::tcp;
+namespace ws = beast::websocket;
 namespace ph = std::placeholders;
-using error_code = boost::beast::error_code;
+using error_code = beast::error_code;
 
 class test_buffer
 {
     char data_[4096];
-    boost::asio::const_buffer b_;
+    asio::const_buffer b_;
 
 public:
     using const_iterator =
-        boost::asio::const_buffer const*;
+        asio::const_buffer const*;
 
-    using value_type = boost::asio::const_buffer;
+    using value_type = asio::const_buffer;
 
     test_buffer()
         : b_(data_, sizeof(data_))
@@ -101,7 +101,7 @@ public:
 };
 
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
@@ -116,7 +116,7 @@ class connection
     test_buffer const& tb_;
     asio::strand<
         asio::io_context::executor_type> strand_;
-    boost::beast::multi_buffer buffer_;
+    beast::multi_buffer buffer_;
     std::mt19937_64 rng_;
     std::size_t count_ = 0;
     std::size_t bytes_ = 0;
@@ -189,9 +189,9 @@ private:
     do_write()
     {
         std::geometric_distribution<std::size_t> dist{
-            double(4) / boost::asio::buffer_size(tb_)};
+            double(4) / asio::buffer_size(tb_)};
         ws_.async_write_some(true,
-            boost::beast::buffers_prefix(dist(rng_), tb_),
+            beast::buffers_prefix(dist(rng_), tb_),
             alloc_.wrap(std::bind(
                 &connection::on_write,
                 shared_from_this(),
@@ -281,7 +281,7 @@ throughput(
 int
 main(int argc, char** argv)
 {
-    boost::beast::unit_test::dstream dout(std::cerr);
+    beast::unit_test::dstream dout(std::cerr);
 
     try
     {
@@ -293,7 +293,7 @@ main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
-        auto const address = boost::asio::ip::make_address(argv[1]);
+        auto const address = asio::ip::make_address(argv[1]);
         auto const port    = static_cast<unsigned short>(std::atoi(argv[2]));
         auto const trials  = static_cast<std::size_t>(std::atoi(argv[3]));
         auto const messages= static_cast<std::size_t>(std::atoi(argv[4]));
@@ -305,7 +305,7 @@ main(int argc, char** argv)
         for(auto i = trials; i != 0; --i)
         {
             report rep;
-            boost::asio::io_context ioc{1};
+            asio::io_context ioc{1};
             for(auto j = workers; j; --j)
             {
                 auto sp =

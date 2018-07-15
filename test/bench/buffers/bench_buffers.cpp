@@ -7,12 +7,12 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/core/flat_buffer.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/core/read_size.hpp>
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/streambuf.hpp>
+#include <beast/core/flat_buffer.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/core/read_size.hpp>
+#include <beast/core/string.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/streambuf.hpp>
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
@@ -20,7 +20,6 @@
 #include <utility>
 #include <vector>
 
-namespace boost {
 namespace beast {
 
 class buffers_test : public beast::unit_test::suite
@@ -223,10 +222,10 @@ public:
                 ,[&](){ return do_hints   <flat_buffer>(repeat, count, size); }
                 ,[&](){ return do_random  <flat_buffer>(repeat, count, size); }
             );
-            do_trials("boost::asio::streambuf", trials,
-                 [&](){ return do_prepares<boost::asio::streambuf>(repeat, count, size); }
-                ,[&](){ return do_hints   <boost::asio::streambuf>(repeat, count, size); }
-                ,[&](){ return do_random  <boost::asio::streambuf>(repeat, count, size); }
+            do_trials("asio::streambuf", trials,
+                 [&](){ return do_prepares<asio::streambuf>(repeat, count, size); }
+                ,[&](){ return do_hints   <asio::streambuf>(repeat, count, size); }
+                ,[&](){ return do_random  <asio::streambuf>(repeat, count, size); }
             );
             log << std::endl;
         }
@@ -237,4 +236,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,benchmarks,buffers);
 
 } // beast
-} // boost

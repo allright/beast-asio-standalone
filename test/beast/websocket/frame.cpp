@@ -7,10 +7,9 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/websocket/detail/frame.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/websocket/detail/frame.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace websocket {
 namespace detail {
@@ -75,4 +74,3 @@ BEAST_DEFINE_TESTSUITE(beast,websocket,frame);
 } // detail
 } // websocket
 } // beast
-} // boost

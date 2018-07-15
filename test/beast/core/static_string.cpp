@@ -8,11 +8,10 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/static_string.hpp>
+#include <beast/core/static_string.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 
 class static_string_test : public beast::unit_test::suite
@@ -1477,4 +1476,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,static_string);
 
 } // beast
-} // boost

@@ -8,26 +8,25 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/multi_buffer.hpp>
+#include <beast/core/multi_buffer.hpp>
 
 #include "buffer_test.hpp"
 
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/core/type_traits.hpp>
-#include <boost/beast/test/test_allocator.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/buffer.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/core/string.hpp>
+#include <beast/core/type_traits.hpp>
+#include <beast/test/test_allocator.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/buffer.hpp>
 #include <algorithm>
 #include <atomic>
 #include <memory>
 #include <string>
 
-namespace boost {
 namespace beast {
 
 BOOST_STATIC_ASSERT(
-    boost::asio::is_dynamic_buffer<multi_buffer>::value);
+    asio::is_dynamic_buffer<multi_buffer>::value);
 
 class multi_buffer_test : public beast::unit_test::suite
 {
@@ -64,7 +63,7 @@ public:
     testMatrix1()
     {
         using namespace test;
-        using boost::asio::buffer;
+        using asio::buffer;
         std::string const s = "Hello, world";
         BEAST_EXPECT(s.size() == 12);
         for(std::size_t i = 1; i < 12; ++i) {
@@ -106,8 +105,8 @@ public:
     testMatrix2()
     {
         using namespace test;
-        using boost::asio::buffer;
-        using boost::asio::buffer_size;
+        using asio::buffer;
+        using asio::buffer_size;
         std::string const s = "Hello, world";
         BEAST_EXPECT(s.size() == 12);
         for(std::size_t i = 1; i < 12; ++i) {
@@ -201,7 +200,7 @@ public:
     void
     testIterators()
     {
-        using boost::asio::buffer_size;
+        using asio::buffer_size;
         multi_buffer b;
         b.prepare(1);
         b.commit(1);
@@ -594,4 +593,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,multi_buffer);
 
 } // beast
-} // boost

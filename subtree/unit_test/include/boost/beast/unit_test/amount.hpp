@@ -7,14 +7,13 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_AMOUNT_HPP
-#define BOOST_BEAST_UNIT_TEST_AMOUNT_HPP
+#ifndef BEAST_UNIT_TEST_AMOUNT_HPP
+#define BEAST_UNIT_TEST_AMOUNT_HPP
 
 #include <cstddef>
 #include <ostream>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -54,6 +53,5 @@ operator<<(std::ostream& s, amount const& t)
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

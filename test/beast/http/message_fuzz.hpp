@@ -7,16 +7,15 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_HTTP_TEST_MESSAGE_FUZZ_HPP
-#define BOOST_BEAST_HTTP_TEST_MESSAGE_FUZZ_HPP
+#ifndef BEAST_HTTP_TEST_MESSAGE_FUZZ_HPP
+#define BEAST_HTTP_TEST_MESSAGE_FUZZ_HPP
 
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/http/detail/rfc7230.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/http/detail/rfc7230.hpp>
 #include <cstdint>
 #include <random>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -504,11 +503,11 @@ public:
             ostream(db) <<
                 "Content-Length: " << len << "\r\n\r\n";
             auto mb = db.prepare(len);
-            for(auto it = boost::asio::buffer_sequence_begin(mb);
-                it != boost::asio::buffer_sequence_end(mb);
+            for(auto it = asio::buffer_sequence_begin(mb);
+                it != asio::buffer_sequence_end(mb);
                 ++it)
             {
-                boost::asio::mutable_buffer b = *it;
+                asio::mutable_buffer b = *it;
                 auto p = reinterpret_cast<char*>(b.data());
                 auto n = b.size();
                 while(n--)
@@ -528,11 +527,11 @@ public:
                 ostream(db) <<
                     to_hex(n) << "\r\n";
                 auto mb = db.prepare(n);
-                for(auto it = boost::asio::buffer_sequence_begin(mb);
-                    it != boost::asio::buffer_sequence_end(mb);
+                for(auto it = asio::buffer_sequence_begin(mb);
+                    it != asio::buffer_sequence_end(mb);
                     ++it)
                 {
-                    boost::asio::mutable_buffer b = *it;
+                    asio::mutable_buffer b = *it;
                     auto p = reinterpret_cast<char*>(b.data());
                     auto m = b.size();
                     while(m--)
@@ -611,6 +610,5 @@ chunkExtensionsTest(
 
 } // http
 } // beast
-} // boost
 
 #endif

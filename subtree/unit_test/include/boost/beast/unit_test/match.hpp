@@ -7,13 +7,12 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_MATCH_HPP
-#define BOOST_BEAST_UNIT_TEST_MATCH_HPP
+#ifndef BEAST_UNIT_TEST_MATCH_HPP
+#define BEAST_UNIT_TEST_MATCH_HPP
 
-#include <boost/beast/unit_test/suite_info.hpp>
+#include <beast/unit_test/suite_info.hpp>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -172,6 +171,5 @@ match_library(std::string const& name)
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

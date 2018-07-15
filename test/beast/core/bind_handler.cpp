@@ -8,16 +8,15 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/bind_handler.hpp>
+#include <beast/core/bind_handler.hpp>
 
-#include <boost/beast/core/detail/type_traits.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/strand.hpp>
+#include <beast/core/detail/type_traits.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/io_context.hpp>
+#include <asio/strand.hpp>
 #include <string>
 
-namespace boost {
 namespace beast {
 
 class bind_handler_test : public unit_test::suite
@@ -74,10 +73,10 @@ public:
         // make sure things compile, also can set a
         // breakpoint in asio_handler_invoke to make sure
         // it is instantiated.
-        boost::asio::io_context ioc;
-        boost::asio::io_service::strand s{ioc};
+        asio::io_context ioc;
+        asio::io_context::strand s{ioc};
         test::stream ts{ioc};
-        boost::asio::post(ioc.get_executor(),
+        asio::post(ioc.get_executor(),
             s.wrap(copyable_handler{}));
     }
 
@@ -112,4 +111,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,bind_handler);
 
 } // beast
-} // boost

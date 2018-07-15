@@ -9,13 +9,12 @@
 
 #include "example/common/detect_ssl.hpp"
 
-#include <boost/beast/core/flat_buffer.hpp>
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/test/yield_to.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/flat_buffer.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/test/yield_to.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 
 class examples_test
@@ -32,18 +31,18 @@ public:
         buf[2] = 0;
         buf[3] = 0;
         BEAST_EXPECT(boost::indeterminate(is_ssl_handshake(
-            boost::asio::buffer(buf, 0))));
+            asio::buffer(buf, 0))));
         BEAST_EXPECT(boost::indeterminate(is_ssl_handshake(
-            boost::asio::buffer(buf, 1))));
+            asio::buffer(buf, 1))));
         BEAST_EXPECT(boost::indeterminate(is_ssl_handshake(
-            boost::asio::buffer(buf, 2))));
+            asio::buffer(buf, 2))));
         BEAST_EXPECT(boost::indeterminate(is_ssl_handshake(
-            boost::asio::buffer(buf, 3))));
+            asio::buffer(buf, 3))));
         BEAST_EXPECT(is_ssl_handshake(
-            boost::asio::buffer(buf, 4)));
+            asio::buffer(buf, 4)));
         buf[0] = 0;
         BEAST_EXPECT(! is_ssl_handshake(
-            boost::asio::buffer(buf, 1)));
+            asio::buffer(buf, 1)));
     }
 
     void
@@ -81,4 +80,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,examples);
 
 } // beast
-} // boost

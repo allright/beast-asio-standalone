@@ -7,15 +7,14 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_HTTP_TEST_PARSER_HPP
-#define BOOST_BEAST_HTTP_TEST_PARSER_HPP
+#ifndef BEAST_HTTP_TEST_PARSER_HPP
+#define BEAST_HTTP_TEST_PARSER_HPP
 
-#include <boost/beast/http/basic_parser.hpp>
-#include <boost/beast/experimental/test/fail_count.hpp>
+#include <beast/http/basic_parser.hpp>
+#include <beast/experimental/test/fail_count.hpp>
 #include <string>
 #include <unordered_map>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -27,7 +26,7 @@ class test_parser
 
 public:
     using mutable_buffers_type =
-        boost::asio::mutable_buffer;
+        asio::mutable_buffer;
 
     int status = 0;
     int version = 0;
@@ -174,6 +173,5 @@ public:
 
 } // http
 } // beast
-} // boost
 
 #endif

@@ -8,12 +8,11 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/websocket/error.hpp>
+#include <beast/websocket/error.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <memory>
 
-namespace boost {
 namespace beast {
 namespace websocket {
 
@@ -79,4 +78,3 @@ BEAST_DEFINE_TESTSUITE(beast,websocket,error);
 
 } // websocket
 } // beast
-} // boost

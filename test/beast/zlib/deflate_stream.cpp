@@ -8,16 +8,15 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/zlib/deflate_stream.hpp>
+#include <beast/zlib/deflate_stream.hpp>
 
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/string.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <cstdint>
 #include <random>
 
 #include "zlib-1.2.11/zlib.h"
 
-namespace boost {
 namespace beast {
 namespace zlib {
 
@@ -317,4 +316,3 @@ BEAST_DEFINE_TESTSUITE(beast,zlib,deflate_stream);
 
 } // zlib
 } // beast
-} // boost

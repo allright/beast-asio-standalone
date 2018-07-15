@@ -7,19 +7,18 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_YIELD_TO_HPP
-#define BOOST_BEAST_TEST_YIELD_TO_HPP
+#ifndef BEAST_TEST_YIELD_TO_HPP
+#define BEAST_TEST_YIELD_TO_HPP
 
-#include <boost/asio/executor_work_guard.hpp>
-#include <boost/asio/io_context.hpp>
-#include <boost/asio/spawn.hpp>
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/spawn.hpp>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
 #include <thread>
 #include <vector>
 
-namespace boost {
 namespace beast {
 namespace test {
 
@@ -32,11 +31,11 @@ namespace test {
 class enable_yield_to
 {
 protected:
-    boost::asio::io_context ioc_;
+    asio::io_context ioc_;
 
 private:
-    boost::asio::executor_work_guard<
-        boost::asio::io_context::executor_type> work_;
+    asio::executor_work_guard<
+        asio::io_context::executor_type> work_;
     std::vector<std::thread> threads_;
     std::mutex m_;
     std::condition_variable cv_;
@@ -45,7 +44,7 @@ private:
 public:
     /// The type of yield context passed to functions.
     using yield_context =
-        boost::asio::yield_context;
+        asio::yield_context;
 
     explicit
     enable_yield_to(std::size_t concurrency = 1)
@@ -65,8 +64,8 @@ public:
     }
 
     /// Return the `io_context` associated with the object
-    boost::asio::io_context&
-    get_io_service()
+    asio::io_context&
+    get_io_context()
     {
         return ioc_;
     }
@@ -82,7 +81,7 @@ public:
 
         @param fn... One or more functions to invoke.
     */
-#if BOOST_BEAST_DOXYGEN
+#if BEAST_DOXYGEN
     template<class... FN>
     void
     yield_to(FN&&... fn)
@@ -120,7 +119,7 @@ void
 enable_yield_to::
 spawn(F0&& f, FN&&... fn)
 {
-    boost::asio::spawn(ioc_,
+    asio::spawn(ioc_,
         [&](yield_context yield)
         {
             f(yield);
@@ -134,6 +133,5 @@ spawn(F0&& f, FN&&... fn)
 
 } // test
 } // beast
-} // boost
 
 #endif

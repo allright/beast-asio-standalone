@@ -8,14 +8,13 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/websocket/stream.hpp>
+#include <beast/websocket/stream.hpp>
 
 #include "test.hpp"
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/strand.hpp>
+#include <asio/io_context.hpp>
+#include <asio/strand.hpp>
 
-namespace boost {
 namespace beast {
 namespace websocket {
 
@@ -57,7 +56,7 @@ public:
             catch(system_error const& se)
             {
                 BEAST_EXPECTS(
-                    se.code() == boost::asio::error::operation_aborted,
+                    se.code() == asio::error::operation_aborted,
                     se.code().message());
             }
         }
@@ -77,7 +76,7 @@ public:
             catch(system_error const& se)
             {
                 BEAST_EXPECTS(
-                    se.code() == boost::asio::error::operation_aborted,
+                    se.code() == asio::error::operation_aborted,
                     se.code().message());
             }
         }
@@ -101,7 +100,7 @@ public:
         doFailLoop([&](test::fail_count& fc)
         {
             echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -134,7 +133,7 @@ public:
         doFailLoop([&](test::fail_count& fc)
         {
             echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -153,7 +152,7 @@ public:
                 [&](error_code ec)
                 {
                     ++count;
-                    if(ec != boost::asio::error::operation_aborted)
+                    if(ec != asio::error::operation_aborted)
                         BOOST_THROW_EXCEPTION(
                             system_error{ec});
                 });
@@ -166,7 +165,7 @@ public:
         doFailLoop([&](test::fail_count& fc)
         {
             echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -207,7 +206,7 @@ public:
         doFailLoop([&](test::fail_count& fc)
         {
             echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -236,7 +235,7 @@ public:
                 [&](error_code ec)
                 {
                     ++count;
-                    if(ec != boost::asio::error::operation_aborted)
+                    if(ec != asio::error::operation_aborted)
                         BOOST_THROW_EXCEPTION(
                             system_error{ec});
                 });
@@ -249,7 +248,7 @@ public:
         doFailLoop([&](test::fail_count& fc)
         {
             echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -277,7 +276,7 @@ public:
                 [&](error_code ec)
                 {
                     ++count;
-                    if(ec != boost::asio::error::operation_aborted)
+                    if(ec != asio::error::operation_aborted)
                         BOOST_THROW_EXCEPTION(
                             system_error{ec});
                 });
@@ -290,7 +289,7 @@ public:
         doFailLoop([&](test::fail_count& fc)
         {
             echo_server es{log, kind::async};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -317,7 +316,7 @@ public:
                 [&](error_code ec)
                 {
                     ++count;
-                    if(ec != boost::asio::error::operation_aborted)
+                    if(ec != asio::error::operation_aborted)
                         BOOST_THROW_EXCEPTION(
                             system_error{ec});
                 });
@@ -331,7 +330,7 @@ public:
         {
             echo_server es{log};
             error_code ec;
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc, fc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -350,7 +349,7 @@ public:
                 [&](error_code ec)
                 {
                     ++count;
-                    if(ec != boost::asio::error::operation_aborted)
+                    if(ec != asio::error::operation_aborted)
                         BOOST_THROW_EXCEPTION(
                             system_error{ec});
                 });
@@ -368,7 +367,7 @@ public:
 
         {
             echo_server es{log, kind::async};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             stream<test::stream> ws{ioc};
             ws.next_layer().connect(es.stream());
             ws.handshake("localhost", "/");
@@ -397,7 +396,7 @@ public:
                 {
                     // Pings after a close are aborted
                     ++count;
-                    BEAST_EXPECTS(ec == boost::asio::
+                    BEAST_EXPECTS(ec == asio::
                         error::operation_aborted,
                             ec.message());
                     // Subsequent calls to close are aborted
@@ -405,7 +404,7 @@ public:
                         [&](error_code ec)
                         {
                             ++count;
-                            BEAST_EXPECTS(ec == boost::asio::
+                            BEAST_EXPECTS(ec == asio::
                                 error::operation_aborted,
                                     ec.message());
                         });
@@ -434,14 +433,14 @@ public:
         stream<test::stream> ws{ioc_};
         stream<test::stream>::ping_op<handler> op{
             handler{}, ws, detail::opcode::ping, {}};
-        using boost::asio::asio_handler_is_continuation;
+        using asio::asio_handler_is_continuation;
         asio_handler_is_continuation(&op);
     }
 
     void
     testMoveOnly()
     {
-        boost::asio::io_context ioc;
+        asio::io_context ioc;
         stream<test::stream> ws{ioc};
         ws.async_ping({}, move_only_handler{});
     }
@@ -461,8 +460,8 @@ public:
         // make sure things compile, also can set a
         // breakpoint in asio_handler_invoke to make sure
         // it is instantiated.
-        boost::asio::io_context ioc;
-        boost::asio::io_service::strand s{ioc};
+        asio::io_context ioc;
+        asio::io_context::strand s{ioc};
         stream<test::stream> ws{ioc};
         ws.async_ping({}, s.wrap(copyable_handler{}));
     }
@@ -482,4 +481,3 @@ BEAST_DEFINE_TESTSUITE(beast,websocket,ping);
 
 } // websocket
 } // beast
-} // boost

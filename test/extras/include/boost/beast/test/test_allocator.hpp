@@ -7,14 +7,13 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_TEST_ALLOCATOR_HPP
-#define BOOST_BEAST_TEST_TEST_ALLOCATOR_HPP
+#ifndef BEAST_TEST_TEST_ALLOCATOR_HPP
+#define BEAST_TEST_TEST_ALLOCATOR_HPP
 
 #include <atomic>
 #include <cstddef>
 #include <memory>
 
-namespace boost {
 namespace beast {
 namespace test {
 
@@ -165,6 +164,5 @@ public:
 
 } // test
 } // beast
-} // boost
 
 #endif

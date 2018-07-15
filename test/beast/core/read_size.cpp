@@ -8,17 +8,16 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/read_size.hpp>
+#include <beast/core/read_size.hpp>
 
-#include <boost/beast/core/flat_buffer.hpp>
-#include <boost/beast/core/flat_static_buffer.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/core/static_buffer.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/flat_buffer.hpp>
+#include <beast/core/flat_static_buffer.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/core/static_buffer.hpp>
+#include <beast/unit_test/suite.hpp>
 
-#include <boost/asio/streambuf.hpp>
+#include <asio/streambuf.hpp>
 
-namespace boost {
 namespace beast {
 
 class read_size_test : public beast::unit_test::suite
@@ -40,11 +39,10 @@ public:
         check<flat_static_buffer<1024>>();
         check<multi_buffer>();
         check<static_buffer<1024>>();
-        check<boost::asio::streambuf>();
+        check<asio::streambuf>();
     }
 };
 
 BEAST_DEFINE_TESTSUITE(beast,core,read_size);
 
 } // beast
-} // boost

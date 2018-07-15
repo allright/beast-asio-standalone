@@ -8,20 +8,19 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/flat_static_buffer.hpp>
+#include <beast/core/flat_static_buffer.hpp>
 
 #include "buffer_test.hpp"
 
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/core/string.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <string>
 
-namespace boost {
 namespace beast {
 
 BOOST_STATIC_ASSERT(
-    boost::asio::is_dynamic_buffer<flat_static_buffer_base>::value);
+    asio::is_dynamic_buffer<flat_static_buffer_base>::value);
 
 class flat_static_buffer_test : public beast::unit_test::suite
 {
@@ -30,8 +29,8 @@ public:
     testStaticBuffer()
     {
         using namespace test;
-        using boost::asio::buffer;
-        using boost::asio::buffer_size;
+        using asio::buffer;
+        using asio::buffer_size;
         char buf[12];
         std::string const s = "Hello, world";
         BEAST_EXPECT(s.size() == sizeof(buf));
@@ -232,4 +231,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,flat_static_buffer);
 
 } // beast
-} // boost

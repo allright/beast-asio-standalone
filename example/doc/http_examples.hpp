@@ -7,7 +7,7 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast.hpp>
+#include <beast.hpp>
 #include <iostream>
 
 /*  This file contains the functions and classes found in the documentation
@@ -17,8 +17,7 @@
     building a network application.
 */
 
-// The documentation assumes the boost::beast::http namespace
-namespace boost {
+// The documentation assumes the beast::http namespace
 namespace beast {
 namespace http {
 
@@ -63,7 +62,7 @@ send_expect_100_continue(
         "SyncStream requirements not met");
 
     static_assert(
-        boost::asio::is_dynamic_buffer<DynamicBuffer>::value,
+        asio::is_dynamic_buffer<DynamicBuffer>::value,
         "DynamicBuffer requirements not met");
 
     // Insert or replace the Expect field
@@ -125,7 +124,7 @@ receive_expect_100_continue(
         "SyncStream requirements not met");
 
     static_assert(
-        boost::asio::is_dynamic_buffer<DynamicBuffer>::value,
+        asio::is_dynamic_buffer<DynamicBuffer>::value,
         "DynamicBuffer requirements not met");
 
     // Declare a parser for a request with a string body
@@ -152,7 +151,7 @@ receive_expect_100_continue(
     // Read the rest of the message.
     //
     // We use parser.base() to return a basic_parser&, to avoid an
-    // ambiguous function error (from boost::asio::read). Another
+    // ambiguous function error (from asio::read). Another
     // solution is to qualify the call, e.g. `beast::http::read`
     //
     read(stream, buffer, parser.base(), ec);
@@ -228,8 +227,8 @@ send_cgi_response(
         // Read a buffer from the child process
         char buffer[2048];
         auto bytes_transferred = input.read_some(
-            boost::asio::buffer(buffer, sizeof(buffer)), ec);
-        if(ec == boost::asio::error::eof)
+            asio::buffer(buffer, sizeof(buffer)), ec);
+        if(ec == asio::error::eof)
         {
             ec = {};
 
@@ -293,7 +292,7 @@ void do_server_head(
     static_assert(is_sync_stream<SyncStream>::value,
         "SyncStream requirements not met");
     static_assert(
-        boost::asio::is_dynamic_buffer<DynamicBuffer>::value,
+        asio::is_dynamic_buffer<DynamicBuffer>::value,
         "DynamicBuffer requirments not met");
 
     // We deliver this payload for all GET requests
@@ -387,7 +386,7 @@ do_head_request(
     static_assert(is_sync_stream<SyncStream>::value,
         "SyncStream requirements not met");
     static_assert(
-        boost::asio::is_dynamic_buffer<DynamicBuffer>::value,
+        asio::is_dynamic_buffer<DynamicBuffer>::value,
         "DynamicBuffer requirments not met");
 
     // The interfaces we are using are low level and do not
@@ -597,11 +596,11 @@ public:
         std::size_t bytes_transferred = 0;
 
         // Loop over the buffer sequence
-        for(auto it = boost::asio::buffer_sequence_begin(buffers);
-            it != boost::asio::buffer_sequence_end(buffers); ++it)
+        for(auto it = asio::buffer_sequence_begin(buffers);
+            it != asio::buffer_sequence_end(buffers); ++it)
         {
             // This is the next buffer in the sequence
-            boost::asio::const_buffer const buffer = *it;
+            asio::const_buffer const buffer = *it;
 
             // Write it to the std::ostream
             os_.write(
@@ -1239,4 +1238,3 @@ print_chunked_body(
 
 } // http
 } // beast
-} // boost

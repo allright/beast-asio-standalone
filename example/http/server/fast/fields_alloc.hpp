@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_EXAMPLE_FIELDS_ALLOC_HPP
-#define BOOST_BEAST_EXAMPLE_FIELDS_ALLOC_HPP
+#ifndef BEAST_EXAMPLE_FIELDS_ALLOC_HPP
+#define BEAST_EXAMPLE_FIELDS_ALLOC_HPP
 
 #include <boost/throw_exception.hpp>
 #include <cstdlib>

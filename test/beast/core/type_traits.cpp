@@ -8,14 +8,13 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/type_traits.hpp>
+#include <beast/core/type_traits.hpp>
 
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/streambuf.hpp>
-#include <boost/asio/detail/consuming_buffers.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/streambuf.hpp>
+#include <asio/detail/consuming_buffers.hpp>
 #include <memory>
 
-namespace boost {
 namespace beast {
 
 namespace detail {
@@ -142,12 +141,12 @@ BOOST_STATIC_ASSERT(! is_completion_handler<H, void(void)>::value);
 
 namespace {
 
-using stream_type = boost::asio::ip::tcp::socket;
+using stream_type = asio::ip::tcp::socket;
 
 struct not_a_stream
 {
     void
-    get_io_service();
+    get_io_context();
 };
 
 BOOST_STATIC_ASSERT(has_get_executor<stream_type>::value);
@@ -167,4 +166,3 @@ BOOST_STATIC_ASSERT(! is_sync_write_stream<not_a_stream>::value);
 } // (anonymous)
 
 } // beast
-} // boost

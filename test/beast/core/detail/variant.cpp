@@ -6,13 +6,12 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/detail/variant.hpp>
+#include <beast/core/detail/variant.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <exception>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace detail {
 
@@ -450,4 +449,3 @@ BEAST_DEFINE_TESTSUITE(beast,core,variant);
 
 } // detail
 } // beast
-} // boost

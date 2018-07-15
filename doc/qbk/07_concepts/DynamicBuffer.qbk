@@ -35,7 +35,7 @@ implementation strategies:
 
 [heading Associated Types]
 
-* `boost::asio::is_dynamic_buffer`
+* `asio::is_dynamic_buffer`
 * __ConstBufferSequence__
 * __MutableBufferSequence__
 

@@ -286,10 +286,10 @@ INCLUDE_PATH           = ../
 INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = \
-                        BOOST_BEAST_DOXYGEN \
-                        BOOST_BEAST_USE_POSIX_FILE=1 \
-                        BOOST_BEAST_USE_WIN32_FILE=1 \
-                        BOOST_ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
+                        BEAST_DOXYGEN \
+                        BEAST_USE_POSIX_FILE=1 \
+                        BEAST_USE_WIN32_FILE=1 \
+                        ASIO_INITFN_RESULT_TYPE(t,a)=void_or_deduced \
                         GENERATING_DOCUMENTATION
 
 EXPAND_AS_DEFINED      =

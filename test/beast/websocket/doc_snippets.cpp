@@ -7,73 +7,73 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/core.hpp>
-#include <boost/asio.hpp>
-#include <boost/asio/spawn.hpp>
-#include <boost/asio/use_future.hpp>
+#include <beast/core.hpp>
+#include <asio.hpp>
+#include <asio/spawn.hpp>
+#include <asio/use_future.hpp>
 #include <algorithm>
 #include <future>
 #include <iostream>
 #include <thread>
 
 //[ws_snippet_1
-#include <boost/beast/websocket.hpp>
-using namespace boost::beast::websocket;
+#include <beast/websocket.hpp>
+using namespace beast::websocket;
 //]
 
-using namespace boost::beast;
+using namespace beast;
 
 namespace doc_ws_snippets {
 
 void fxx() {
 
-boost::asio::io_service ios;
-boost::asio::io_service::work work{ios};
+asio::io_context ios;
+asio::io_context::work work{ios};
 std::thread t{[&](){ ios.run(); }};
 error_code ec;
-boost::asio::ip::tcp::socket sock{ios};
+asio::ip::tcp::socket sock{ios};
 
 {
 //[ws_snippet_2
-    stream<boost::asio::ip::tcp::socket> ws{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
 //]
 }
 
 {
 //[ws_snippet_3
-    stream<boost::asio::ip::tcp::socket> ws{std::move(sock)};
+    stream<asio::ip::tcp::socket> ws{std::move(sock)};
 //]
 }
 
 {
 //[ws_snippet_4
-    stream<boost::asio::ip::tcp::socket&> ws{sock};
+    stream<asio::ip::tcp::socket&> ws{sock};
 //]
 
 //[ws_snippet_5
-    ws.next_layer().shutdown(boost::asio::ip::tcp::socket::shutdown_send);
+    ws.next_layer().shutdown(asio::ip::tcp::socket::shutdown_send);
 //]
 }
 
 {
 //[ws_snippet_6
     std::string const host = "mywebapp.com";
-    boost::asio::ip::tcp::resolver r{ios};
-    stream<boost::asio::ip::tcp::socket> ws{ios};
-    boost::asio::connect(ws.next_layer(), r.resolve({host, "ws"}));
+    asio::ip::tcp::resolver r{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
+    asio::connect(ws.next_layer(), r.resolve({host, "ws"}));
 //]
 }
 
 {
 //[ws_snippet_7
-    boost::asio::ip::tcp::acceptor acceptor{ios};
-    stream<boost::asio::ip::tcp::socket> ws{acceptor.get_io_service()};
+    asio::ip::tcp::acceptor acceptor{ios};
+    stream<asio::ip::tcp::socket> ws{acceptor.get_io_context()};
     acceptor.accept(ws.next_layer());
 //]
 }
 
 {
-    stream<boost::asio::ip::tcp::socket> ws{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
 //[ws_snippet_8
     ws.handshake("localhost", "/");
 //]
@@ -119,7 +119,7 @@ boost::asio::ip::tcp::socket sock{ios};
     if(websocket::is_upgrade(req))
     {
         // Construct the stream, transferring ownership of the socket
-        stream<boost::asio::ip::tcp::socket> ws{std::move(sock)};
+        stream<asio::ip::tcp::socket> ws{std::move(sock)};
 
         // Accept the request from our message. Clients SHOULD NOT
         // begin sending WebSocket frames until the server has
@@ -137,19 +137,19 @@ boost::asio::ip::tcp::socket sock{ios};
 }
 
 {
-    stream<boost::asio::ip::tcp::socket> ws{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
 //[ws_snippet_14
     // Read into our buffer until we reach the end of the HTTP request.
     // No parsing takes place here, we are just accumulating data.
-    boost::asio::streambuf buffer;
-    boost::asio::read_until(sock, buffer, "\r\n\r\n");
+    asio::streambuf buffer;
+    asio::read_until(sock, buffer, "\r\n\r\n");
 
     // Now accept the connection, using the buffered data.
     ws.accept(buffer.data());
 //]
 }
 {
-    stream<boost::asio::ip::tcp::socket> ws{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
 //[ws_snippet_15
     multi_buffer buffer;
     ws.read(buffer);
@@ -161,7 +161,7 @@ boost::asio::ip::tcp::socket sock{ios};
 }
 
 {
-    stream<boost::asio::ip::tcp::socket> ws{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
 //[ws_snippet_16
     multi_buffer buffer;
     for(;;)
@@ -171,7 +171,7 @@ boost::asio::ip::tcp::socket sock{ios};
     consuming_buffers<multi_buffer::const_buffers_type> cb{buffer.data()};
     for(;;)
     {
-        using boost::asio::buffer_size;
+        using asio::buffer_size;
         if(buffer_size(cb) > 512)
         {
             ws.write_some(false, buffer_prefix(512, cb));
@@ -187,7 +187,7 @@ boost::asio::ip::tcp::socket sock{ios};
 }
 
 {
-    stream<boost::asio::ip::tcp::socket> ws{ios};
+    stream<asio::ip::tcp::socket> ws{ios};
 //[ws_snippet_17
     auto cb =
         [](frame_type kind, string_view payload)
@@ -222,12 +222,12 @@ boost::asio::ip::tcp::socket sock{ios};
 // workaround for https://github.com/chriskohlhoff/asio/issues/112
 #ifdef BOOST_MSVC
 //[ws_snippet_21
-void echo(stream<boost::asio::ip::tcp::socket>& ws,
-    multi_buffer& buffer, boost::asio::yield_context yield)
+void echo(stream<asio::ip::tcp::socket>& ws,
+    multi_buffer& buffer, asio::yield_context yield)
 {
     ws.async_read(buffer, yield);
     std::future<void> fut =
-        ws.async_write(buffer.data(), boost::asio::use_future);
+        ws.async_write(buffer.data(), asio::use_future);
 }
 //]
 #endif
@@ -236,41 +236,41 @@ void echo(stream<boost::asio::ip::tcp::socket>& ws,
 
 //------------------------------------------------------------------------------
 
-#if BOOST_BEAST_USE_OPENSSL
+#if BEAST_USE_OPENSSL
 
 //[wss_snippet_1
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio/ssl.hpp>
+#include <beast/websocket/ssl.hpp>
+#include <asio/ssl.hpp>
 //]
 
 namespace doc_wss_snippets {
 
 void fxx() {
 
-boost::asio::io_service ios;
-boost::asio::io_service::work work{ios};
+asio::io_context ios;
+asio::io_context::work work{ios};
 std::thread t{[&](){ ios.run(); }};
 error_code ec;
-boost::asio::ip::tcp::socket sock{ios};
+asio::ip::tcp::socket sock{ios};
 
 {
 //[wss_snippet_2
-    boost::asio::ssl::context ctx{boost::asio::ssl::context::sslv23};
-    stream<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>> wss{ios, ctx};
+    asio::ssl::context ctx{asio::ssl::context::sslv23};
+    stream<asio::ssl::stream<asio::ip::tcp::socket>> wss{ios, ctx};
 //]
 }
 
 {
 //[wss_snippet_3
-    boost::asio::ip::tcp::endpoint ep;
-    boost::asio::ssl::context ctx{boost::asio::ssl::context::sslv23};
-    stream<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>> ws{ios, ctx};
+    asio::ip::tcp::endpoint ep;
+    asio::ssl::context ctx{asio::ssl::context::sslv23};
+    stream<asio::ssl::stream<asio::ip::tcp::socket>> ws{ios, ctx};
 
     // connect the underlying TCP/IP socket
     ws.next_layer().next_layer().connect(ep);
 
     // perform SSL handshake
-    ws.next_layer().handshake(boost::asio::ssl::stream_base::client);
+    ws.next_layer().handshake(asio::ssl::stream_base::client);
 
     // perform WebSocket handshake
     ws.handshake("localhost", "/");

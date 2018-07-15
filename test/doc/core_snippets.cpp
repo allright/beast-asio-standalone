@@ -9,14 +9,14 @@
 
 //[snippet_core_1a
 
-#include <boost/beast/core.hpp>
-#include <boost/asio.hpp>
+#include <beast/core.hpp>
+#include <asio.hpp>
 #include <iostream>
 #include <thread>
 
 //]
 
-using namespace boost::beast;
+using namespace beast;
 
 namespace doc_core_snippets {
 
@@ -25,14 +25,14 @@ void fxx()
 
 //[snippet_core_1b
 //
-using namespace boost::beast;
+using namespace beast;
 
-boost::asio::io_context ioc;
-auto work = boost::asio::make_work_guard(ioc);
+asio::io_context ioc;
+auto work = asio::make_work_guard(ioc);
 std::thread t{[&](){ ioc.run(); }};
 
 error_code ec;
-boost::asio::ip::tcp::socket sock{ioc};
+asio::ip::tcp::socket sock{ioc};
 
 //]
 
@@ -40,10 +40,10 @@ boost::asio::ip::tcp::socket sock{ioc};
 //[snippet_core_2
 
 char const* const host = "www.example.com";
-boost::asio::ip::tcp::resolver r{ioc};
-boost::asio::ip::tcp::socket stream{ioc};
+asio::ip::tcp::resolver r{ioc};
+asio::ip::tcp::socket stream{ioc};
 auto const results = r.resolve(host, "http");
-boost::asio::connect(stream, results.begin(), results.end());
+asio::connect(stream, results.begin(), results.end());
 
 // At this point `stream` is a connected to a remote
 // host and may be used to perform stream operations.
@@ -60,7 +60,7 @@ void write_string(SyncWriteStream& stream, string_view s)
 {
     static_assert(is_sync_write_stream<SyncWriteStream>::value,
         "SyncWriteStream requirements not met");
-    boost::asio::write(stream, boost::asio::const_buffer(s.data(), s.size()));
+    asio::write(stream, asio::const_buffer(s.data(), s.size()));
 }
 
 //]

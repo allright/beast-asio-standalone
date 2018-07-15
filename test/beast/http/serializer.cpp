@@ -8,12 +8,11 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/serializer.hpp>
+#include <beast/http/serializer.hpp>
 
-#include <boost/beast/http/string_body.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -27,7 +26,7 @@ public:
         struct writer
         {
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             writer(header<isRequest, Fields> const&, value_type const&);
@@ -47,7 +46,7 @@ public:
         struct writer
         {
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             writer(header<isRequest, Fields>&, value_type&);
@@ -91,7 +90,7 @@ public:
         operator()(error_code&,
             ConstBufferSequence const& buffers)
         {
-            size = boost::asio::buffer_size(buffers);
+            size = asio::buffer_size(buffers);
         }
     };
 
@@ -126,4 +125,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,serializer);
 
 } // http
 } // beast
-} // boost

@@ -8,11 +8,10 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/status.hpp>
+#include <beast/http/status.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -176,5 +175,4 @@ BEAST_DEFINE_TESTSUITE(beast,http,status);
 
 } // http
 } // beast
-} // boost
 

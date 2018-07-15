@@ -7,13 +7,12 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_THROUGHPUT_HPP
-#define BOOST_BEAST_TEST_THROUGHPUT_HPP
+#ifndef BEAST_TEST_THROUGHPUT_HPP
+#define BEAST_TEST_THROUGHPUT_HPP
 
 #include <chrono>
 #include <cstdint>
 
-namespace boost {
 namespace beast {
 namespace test {
 
@@ -52,6 +51,5 @@ throughput(std::chrono::duration<
 
 } // test
 } // beast
-} // boost
 
 #endif

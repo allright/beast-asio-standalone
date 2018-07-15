@@ -7,11 +7,10 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/core/detail/sha1.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/detail/sha1.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <array>
 
-namespace boost {
 namespace beast {
 namespace detail {
 
@@ -80,4 +79,3 @@ BEAST_DEFINE_TESTSUITE(beast,core,sha1);
 
 } // test
 } // beast
-} // boost

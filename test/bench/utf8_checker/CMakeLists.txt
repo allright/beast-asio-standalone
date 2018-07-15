@@ -13,7 +13,7 @@ GroupSources(include/boost/beast beast)
 GroupSources(test/bench/utf8_checker "/")
 
 add_executable (bench-utf8-checker
-    ${BOOST_BEAST_FILES}
+    ${BEAST_FILES}
     ${EXTRAS_FILES}
     ${TEST_MAIN}
     Jamfile

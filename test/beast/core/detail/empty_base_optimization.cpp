@@ -8,11 +8,10 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/detail/empty_base_optimization.hpp>
+#include <beast/core/detail/empty_base_optimization.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace detail {
 
@@ -95,4 +94,3 @@ BEAST_DEFINE_TESTSUITE(beast,core,empty_base_optimization);
 
 } // detail
 } // beast
-} // boost

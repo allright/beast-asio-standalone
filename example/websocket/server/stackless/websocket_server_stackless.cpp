@@ -13,12 +13,12 @@
 //
 //------------------------------------------------------------------------------
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/coroutine.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <asio/bind_executor.hpp>
+#include <asio/coroutine.hpp>
+#include <asio/strand.hpp>
+#include <asio/ip/tcp.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <functional>
@@ -28,27 +28,27 @@
 #include <thread>
 #include <vector>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 //------------------------------------------------------------------------------
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
 
 // Echoes back all received WebSocket messages
 class session
-    : public boost::asio::coroutine
+    : public asio::coroutine
     , public std::enable_shared_from_this<session>
 {
     websocket::stream<tcp::socket> ws_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
-    boost::beast::multi_buffer buffer_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
+    beast::multi_buffer buffer_;
 
 public:
     // Take ownership of the socket
@@ -66,10 +66,10 @@ public:
         loop({}, 0);
     }
 
-#include <boost/asio/yield.hpp>
+#include <asio/yield.hpp>
     void
     loop(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -77,7 +77,7 @@ public:
         {
             // Accept the websocket handshake
             yield ws_.async_accept(
-                boost::asio::bind_executor(
+                asio::bind_executor(
                     strand_,
                     std::bind(
                         &session::loop,
@@ -92,7 +92,7 @@ public:
                 // Read a message into our buffer
                 yield ws_.async_read(
                     buffer_,
-                    boost::asio::bind_executor(
+                    asio::bind_executor(
                         strand_,
                         std::bind(
                             &session::loop,
@@ -111,7 +111,7 @@ public:
                 ws_.text(ws_.got_text());
                 yield ws_.async_write(
                     buffer_.data(),
-                    boost::asio::bind_executor(
+                    asio::bind_executor(
                         strand_,
                         std::bind(
                             &session::loop,
@@ -126,14 +126,14 @@ public:
             }
         }
     }
-#include <boost/asio/unyield.hpp>
+#include <asio/unyield.hpp>
 };
 
 //------------------------------------------------------------------------------
 
 // Accepts incoming connections and launches the sessions
 class listener
-    : public boost::asio::coroutine
+    : public asio::coroutine
     , public std::enable_shared_from_this<listener>
 {
     tcp::acceptor acceptor_;
@@ -141,12 +141,12 @@ class listener
 
 public:
     listener(
-        boost::asio::io_context& ioc,
+        asio::io_context& ioc,
         tcp::endpoint endpoint)
         : acceptor_(ioc)
         , socket_(ioc)
     {
-        boost::system::error_code ec;
+        std::error_code ec;
 
         // Open the acceptor
         acceptor_.open(endpoint.protocol(), ec);
@@ -157,7 +157,7 @@ public:
         }
 
         // Allow address reuse
-        acceptor_.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        acceptor_.set_option(asio::socket_base::reuse_address(true), ec);
         if(ec)
         {
             fail(ec, "set_option");
@@ -174,7 +174,7 @@ public:
 
         // Start listening for connections
         acceptor_.listen(
-            boost::asio::socket_base::max_listen_connections, ec);
+            asio::socket_base::max_listen_connections, ec);
         if(ec)
         {
             fail(ec, "listen");
@@ -191,9 +191,9 @@ public:
         loop();
     }
 
-#include <boost/asio/yield.hpp>
+#include <asio/yield.hpp>
     void
-    loop(boost::system::error_code ec = {})
+    loop(std::error_code ec = {})
     {
         reenter(*this)
         {
@@ -217,7 +217,7 @@ public:
             }
         }
     }
-#include <boost/asio/unyield.hpp>
+#include <asio/unyield.hpp>
 };
 
 //------------------------------------------------------------------------------
@@ -233,12 +233,12 @@ int main(int argc, char* argv[])
             "    websocket-server-stackless 0.0.0.0 8080 1\n";
         return EXIT_FAILURE;
     }
-    auto const address = boost::asio::ip::make_address(argv[1]);
+    auto const address = asio::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const threads = std::max<int>(1, std::atoi(argv[3]));
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{threads};
+    asio::io_context ioc{threads};
 
     // Create and launch a listening port
     std::make_shared<listener>(ioc, tcp::endpoint{address, port})->run();

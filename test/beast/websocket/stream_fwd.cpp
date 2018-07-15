@@ -8,4 +8,4 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/websocket/stream_fwd.hpp>
+#include <beast/websocket/stream_fwd.hpp>

@@ -18,7 +18,7 @@ if (MSVC)
 endif()
 
 add_executable (tests-beast-zlib
-    ${BOOST_BEAST_FILES}
+    ${BEAST_FILES}
     ${EXTRAS_FILES}
     ${ZLIB_SOURCES}
     ${TEST_MAIN}

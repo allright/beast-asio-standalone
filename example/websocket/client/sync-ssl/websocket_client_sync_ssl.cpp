@@ -15,19 +15,19 @@
 
 #include "example/common/root_certificates.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ssl/stream.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <beast/websocket/ssl.hpp>
+#include <asio/connect.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/ssl/stream.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace ssl = asio::ssl;               // from <asio/ssl.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 // Sends a WebSocket message and prints the response
 int main(int argc, char** argv)
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         auto const text = argv[3];
 
         // The io_context is required for all I/O
-        boost::asio::io_context ioc;
+        asio::io_context ioc;
 
         // The SSL context is required, and holds certificates
         ssl::context ctx{ssl::context::sslv23_client};
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
         auto const results = resolver.resolve(host, port);
 
         // Make the connection on the IP address we get from a lookup
-        boost::asio::connect(ws.next_layer().next_layer(), results.begin(), results.end());
+        asio::connect(ws.next_layer().next_layer(), results.begin(), results.end());
 
         // Perform the SSL handshake
         ws.next_layer().handshake(ssl::stream_base::client);
@@ -73,10 +73,10 @@ int main(int argc, char** argv)
         ws.handshake(host, "/");
 
         // Send the message
-        ws.write(boost::asio::buffer(std::string(text)));
+        ws.write(asio::buffer(std::string(text)));
 
         // This buffer will hold the incoming message
-        boost::beast::multi_buffer b;
+        beast::multi_buffer b;
 
         // Read a message into our buffer
         ws.read(b);
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
         // If we get here then the connection is closed gracefully
 
         // The buffers() function helps print a ConstBufferSequence
-        std::cout << boost::beast::buffers(b.data()) << std::endl;
+        std::cout << beast::buffers(b.data()) << std::endl;
     }
     catch(std::exception const& e)
     {

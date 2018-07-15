@@ -15,12 +15,12 @@
 
 #include "example/common/server_certificate.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/spawn.hpp>
-#include <boost/asio/ssl/stream.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <beast/websocket/ssl.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/spawn.hpp>
+#include <asio/ssl/stream.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <functional>
@@ -30,15 +30,15 @@
 #include <thread>
 #include <vector>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace ssl = asio::ssl;               // from <asio/ssl.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 //------------------------------------------------------------------------------
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
@@ -48,9 +48,9 @@ void
 do_session(
     tcp::socket& socket,
     ssl::context& ctx,
-    boost::asio::yield_context yield)
+    asio::yield_context yield)
 {
-    boost::system::error_code ec;
+    std::error_code ec;
 
     // Construct the stream by moving in the socket
     websocket::stream<ssl::stream<tcp::socket&>> ws{socket, ctx};
@@ -68,7 +68,7 @@ do_session(
     for(;;)
     {
         // This buffer will hold the incoming message
-        boost::beast::multi_buffer buffer;
+        beast::multi_buffer buffer;
 
         // Read a message
         ws.async_read(buffer, yield[ec]);
@@ -93,12 +93,12 @@ do_session(
 // Accepts incoming connections and launches the sessions
 void
 do_listen(
-    boost::asio::io_context& ioc,
+    asio::io_context& ioc,
     ssl::context& ctx,
     tcp::endpoint endpoint,
-    boost::asio::yield_context yield)
+    asio::yield_context yield)
 {
-    boost::system::error_code ec;
+    std::error_code ec;
 
     // Open the acceptor
     tcp::acceptor acceptor(ioc);
@@ -107,7 +107,7 @@ do_listen(
         return fail(ec, "open");
 
     // Allow address reuse
-    acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
+    acceptor.set_option(asio::socket_base::reuse_address(true), ec);
     if(ec)
         return fail(ec, "set_option");
 
@@ -117,7 +117,7 @@ do_listen(
         return fail(ec, "bind");
 
     // Start listening for connections
-    acceptor.listen(boost::asio::socket_base::max_listen_connections, ec);
+    acceptor.listen(asio::socket_base::max_listen_connections, ec);
     if(ec)
         return fail(ec, "listen");
 
@@ -128,7 +128,7 @@ do_listen(
         if(ec)
             fail(ec, "accept");
         else
-            boost::asio::spawn(
+            asio::spawn(
                 acceptor.get_executor().context(),
                 std::bind(
                     &do_session,
@@ -149,12 +149,12 @@ int main(int argc, char* argv[])
             "    websocket-server-coro-ssl 0.0.0.0 8080 1\n";
         return EXIT_FAILURE;
     }
-    auto const address = boost::asio::ip::make_address(argv[1]);
+    auto const address = asio::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const threads = std::max<int>(1, std::atoi(argv[3]));
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{threads};
+    asio::io_context ioc{threads};
 
     // The SSL context is required, and holds certificates
     ssl::context ctx{ssl::context::sslv23};
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
     load_server_certificate(ctx);
 
     // Spawn a listening port
-    boost::asio::spawn(ioc,
+    asio::spawn(ioc,
         std::bind(
             &do_listen,
             std::ref(ioc),

@@ -102,7 +102,7 @@ from the corresponding distribution of Boost.
 Beast is header-only. To use it just add the necessary `#include` line
 to your source files, like this:
 ```C++
-#include <boost/beast.hpp>
+#include <beast.hpp>
 ```
 
 To build your program successfully, you'll need to add the Boost.System

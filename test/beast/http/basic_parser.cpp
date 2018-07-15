@@ -8,22 +8,21 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/basic_parser.hpp>
+#include <beast/http/basic_parser.hpp>
 
 #include "message_fuzz.hpp"
 #include "test_parser.hpp"
 
-#include <boost/beast/core/buffers_cat.hpp>
-#include <boost/beast/core/buffers_prefix.hpp>
-#include <boost/beast/core/buffers_suffix.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/http/parser.hpp>
-#include <boost/beast/http/string_body.hpp>
-#include <boost/beast/test/fuzz.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_cat.hpp>
+#include <beast/core/buffers_prefix.hpp>
+#include <beast/core/buffers_suffix.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/http/parser.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/test/fuzz.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -152,11 +151,11 @@ public:
 
     template<class Parser, class ConstBufferSequence, class Test>
     typename std::enable_if<
-        boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value>::type
+        asio::is_const_buffer_sequence<ConstBufferSequence>::value>::type
     parsegrind(ConstBufferSequence const& buffers,
         Test const& test, bool skip = false)
     {
-        auto const size = boost::asio::buffer_size(buffers);
+        auto const size = asio::buffer_size(buffers);
         for(std::size_t i = 1; i < size - 1; ++i)
         {
             Parser p;
@@ -174,7 +173,7 @@ public:
             n = p.put(cb, ec);
             if(! BEAST_EXPECTS(! ec, ec.message()))
                 continue;
-            if(! BEAST_EXPECT(n == boost::asio::buffer_size(cb)))
+            if(! BEAST_EXPECT(n == asio::buffer_size(cb)))
                 continue;
             if(p.need_eof())
             {
@@ -213,13 +212,13 @@ public:
     void
     parsegrind(string_view msg, Test const& test, bool skip = false)
     {
-        parsegrind<Parser>(boost::asio::const_buffer{
+        parsegrind<Parser>(asio::const_buffer{
             msg.data(), msg.size()}, test, skip);
     }
 
     template<class Parser, class ConstBufferSequence>
     typename std::enable_if<
-        boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value>::type
+        asio::is_const_buffer_sequence<ConstBufferSequence>::value>::type
     parsegrind(ConstBufferSequence const& buffers)
     {
         parsegrind<Parser>(buffers, [](Parser const&){});
@@ -241,7 +240,7 @@ public:
             Parser p;
             p.eager(true);
             error_code ec;
-            buffers_suffix<boost::asio::const_buffer> cb{
+            buffers_suffix<asio::const_buffer> cb{
                 boost::in_place_init, msg.data(), msg.size()};
             auto n = p.put(buffers_prefix(i, cb), ec);
             if(ec == result)
@@ -266,8 +265,8 @@ public:
             p.eager(true);
             error_code ec;
             p.put(buffers_cat(
-                boost::asio::const_buffer{msg.data(), i},
-                boost::asio::const_buffer{
+                asio::const_buffer{msg.data(), i},
+                asio::const_buffer{
                     msg.data() + i, msg.size() - i}), ec);
             if(! ec)
                 p.put_eof(ec);
@@ -887,7 +886,7 @@ public:
     //--------------------------------------------------------------------------
 
     static
-    boost::asio::const_buffer
+    asio::const_buffer
     buf(string_view s)
     {
         return {s.data(), s.size()};
@@ -1080,7 +1079,7 @@ public:
             "GET / HTTP/1.1\r\n"
             "\r\n"
             "die!";
-        p.put(boost::asio::buffer(
+        p.put(asio::buffer(
             s.data(), s.size()), ec);
         if(! BEAST_EXPECTS(! ec, ec.message()))
             return;
@@ -1117,7 +1116,7 @@ public:
             "HTTP/1.1 101 Switching Protocols\r\n"
             "Content-Length: 2147483648\r\n"
             "\r\n";
-        p.put(boost::asio::buffer(
+        p.put(asio::buffer(
             s.data(), s.size()), ec);
         if(! BEAST_EXPECTS(! ec, ec.message()))
             return;
@@ -1140,7 +1139,7 @@ public:
                 error_code ec;
                 test_parser<false> p;
                 p.eager(true);
-                p.put(boost::asio::const_buffer{
+                p.put(asio::const_buffer{
                     s.data(), s.size()}, ec);
             });
         };
@@ -1156,7 +1155,7 @@ public:
             error_code ec;
             test_parser<false> p;
             p.eager(true);
-            p.put(boost::asio::const_buffer{
+            p.put(asio::const_buffer{
                 msg.data(), msg.size()}, ec);
             BEAST_EXPECTS(! ec, ec.message());
             grind(msg);
@@ -1173,7 +1172,7 @@ public:
             error_code ec;
             test_parser<false> p;
             p.eager(true);
-            p.put(boost::asio::const_buffer{
+            p.put(asio::const_buffer{
                 msg.data(), msg.size()}, ec);
             BEAST_EXPECT(ec);
             grind(msg);
@@ -1209,7 +1208,7 @@ public:
 
         error_code ec;
         test_parser<true> p;
-        feed(boost::asio::buffer(buf, sizeof(buf)), p, ec);
+        feed(asio::buffer(buf, sizeof(buf)), p, ec);
         BEAST_EXPECT(ec);
     }
 
@@ -1244,4 +1243,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,basic_parser);
 
 } // http
 } // beast
-} // boost

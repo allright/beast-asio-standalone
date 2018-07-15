@@ -8,22 +8,21 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/parser.hpp>
+#include <beast/http/parser.hpp>
 
 #include "test_parser.hpp"
 
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/beast/test/yield_to.hpp>
-#include <boost/beast/core/buffers_suffix.hpp>
-#include <boost/beast/core/flat_buffer.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/http/read.hpp>
-#include <boost/beast/http/string_body.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <beast/test/yield_to.hpp>
+#include <beast/core/buffers_suffix.hpp>
+#include <beast/core/flat_buffer.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/http/read.hpp>
+#include <beast/http/string_body.hpp>
 #include <boost/system/system_error.hpp>
 #include <algorithm>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -37,7 +36,7 @@ public:
         parser<isRequest, string_body>;
 
     static
-    boost::asio::const_buffer
+    asio::const_buffer
     buf(string_view s)
     {
         return {s.data(), s.size()};
@@ -51,7 +50,7 @@ public:
         basic_parser<isRequest, Derived>& p,
             error_code& ec)
     {
-        using boost::asio::buffer_size;
+        using asio::buffer_size;
         buffers_suffix<ConstBufferSequence> cb{buffers};
         for(;;)
         {
@@ -75,7 +74,7 @@ public:
     void
     doMatrix(string_view s0, F const& f)
     {
-        using boost::asio::buffer;
+        using asio::buffer;
         // parse a single buffer
         {
             auto s = s0;
@@ -376,4 +375,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,parser);
 
 } // http
 } // beast
-} // boost

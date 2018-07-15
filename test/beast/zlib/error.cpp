@@ -8,12 +8,11 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/zlib/error.hpp>
+#include <beast/zlib/error.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <memory>
 
-namespace boost {
 namespace beast {
 namespace zlib {
 
@@ -62,4 +61,3 @@ BEAST_DEFINE_TESTSUITE(beast,zlib,error);
 
 } // zlib
 } // beast
-} // boost

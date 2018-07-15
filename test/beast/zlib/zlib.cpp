@@ -9,4 +9,4 @@
 
 // Make sure symbols don't confict with ZLib
 #include "zlib-1.2.11/zlib.h"
-#include <boost/beast/zlib.hpp>
+#include <beast/zlib.hpp>

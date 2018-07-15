@@ -7,16 +7,15 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_SUITE_HPP
-#define BOOST_BEAST_UNIT_TEST_SUITE_HPP
+#ifndef BEAST_UNIT_TEST_SUITE_HPP
+#define BEAST_UNIT_TEST_SUITE_HPP
 
-#include <boost/beast/unit_test/runner.hpp>
+#include <beast/unit_test/runner.hpp>
 #include <boost/throw_exception.hpp>
 #include <ostream>
 #include <sstream>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -63,7 +62,7 @@ enum abort_t
 
     Derived classes execute a series of testcases, where each testcase is
     a series of pass/fail tests. To provide a unit test using this class,
-    derive from it and use the BOOST_BEAST_DEFINE_UNIT_TEST macro in a
+    derive from it and use the BEAST_DEFINE_UNIT_TEST macro in a
     translation unit.
 */
 class suite
@@ -629,7 +628,6 @@ run(runner& r)
 
 } // unit_test
 } // beast
-} // boost
 
 //------------------------------------------------------------------------------
 
@@ -684,7 +682,7 @@ run(runner& r)
 #define BEAST_DEFINE_TESTSUITE(Class,Module,Library)
 
 #else
-#include <boost/beast/unit_test/global_suites.hpp>
+#include <beast/unit_test/global_suites.hpp>
 #define BEAST_DEFINE_TESTSUITE(Library,Module,Class) \
         BEAST_DEFINE_TESTSUITE_INSERT(Library,Module,Class,false)
 #define BEAST_DEFINE_TESTSUITE_MANUAL(Library,Module,Class) \

@@ -7,12 +7,11 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_SIG_WAIT_HPP
-#define BOOST_BEAST_TEST_SIG_WAIT_HPP
+#ifndef BEAST_TEST_SIG_WAIT_HPP
+#define BEAST_TEST_SIG_WAIT_HPP
 
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
-namespace boost {
 namespace beast {
 namespace test {
 
@@ -21,11 +20,11 @@ inline
 void
 sig_wait()
 {
-    boost::asio::io_context ioc;
-    boost::asio::signal_set signals(
+    asio::io_context ioc;
+    asio::signal_set signals(
         ioc, SIGINT, SIGTERM);
     signals.async_wait(
-        [&](boost::system::error_code const&, int)
+        [&](std::error_code const&, int)
         {
         });
     ioc.run();
@@ -33,6 +32,5 @@ sig_wait()
 
 } // test
 } // beast
-} // boost
 
 #endif

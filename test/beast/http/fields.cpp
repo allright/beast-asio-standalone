@@ -8,16 +8,15 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/fields.hpp>
+#include <beast/http/fields.hpp>
 
-#include <boost/beast/http/empty_body.hpp>
-#include <boost/beast/http/message.hpp>
-#include <boost/beast/http/type_traits.hpp>
-#include <boost/beast/test/test_allocator.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/http/empty_body.hpp>
+#include <beast/http/message.hpp>
+#include <beast/http/type_traits.hpp>
+#include <beast/test/test_allocator.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -72,13 +71,13 @@ public:
 
     // std::allocator is noexcept movable, fields should satisfy
     // these constraints as well.
-    BOOST_STATIC_ASSERT(std::is_nothrow_move_constructible<fields>::value);
-    BOOST_STATIC_ASSERT(std::is_nothrow_move_assignable<fields>::value);
+    BOOST_STATIC_ASSERT(std::std::is_nothrow_move_constructible<fields>::value);
+    BOOST_STATIC_ASSERT(std::std::is_nothrow_move_assignable<fields>::value);
 
     // Check if basic_fields respects throw-constructibility and
     // propagate_on_container_move_assignment of the allocator.
-    BOOST_STATIC_ASSERT(std::is_nothrow_move_constructible<test_fields>::value);
-    BOOST_STATIC_ASSERT(!std::is_nothrow_move_assignable<test_fields>::value);
+    BOOST_STATIC_ASSERT(std::std::is_nothrow_move_constructible<test_fields>::value);
+    BOOST_STATIC_ASSERT(!std::std::is_nothrow_move_assignable<test_fields>::value);
 
     template<class Allocator>
     using fa_t = basic_fields<Allocator>;
@@ -1008,4 +1007,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,fields);
 
 } // http
 } // beast
-} // boost

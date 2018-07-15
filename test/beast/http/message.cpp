@@ -8,16 +8,15 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/message.hpp>
+#include <beast/http/message.hpp>
 
-#include <boost/beast/http/empty_body.hpp>
-#include <boost/beast/http/string_body.hpp>
-#include <boost/beast/http/fields.hpp>
-#include <boost/beast/http/string_body.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/http/empty_body.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/http/fields.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <type_traits>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -518,4 +517,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,message);
 
 } // http
 } // beast
-} // boost

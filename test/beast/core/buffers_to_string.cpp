@@ -8,13 +8,12 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/buffers_to_string.hpp>
+#include <beast/core/buffers_to_string.hpp>
 
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 
 class buffers_to_string_test : public unit_test::suite
@@ -33,4 +32,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,buffers_to_string);
 
 } // beast
-} // boost

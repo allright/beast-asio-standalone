@@ -8,14 +8,13 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/websocket/detail/utf8_checker.hpp>
+#include <beast/websocket/detail/utf8_checker.hpp>
 
-#include <boost/beast/core/buffers_suffix.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_suffix.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <array>
 
-namespace boost {
 namespace beast {
 namespace websocket {
 namespace detail {
@@ -97,7 +96,7 @@ public:
         // Autobahn 6.18.1
         {
             utf8_checker u;
-            BEAST_EXPECT(! u.write(boost::asio::buffer("\xc1\xbf", 2)));
+            BEAST_EXPECT(! u.write(asio::buffer("\xc1\xbf", 2)));
         }
 
         utf8_checker u;
@@ -143,7 +142,7 @@ public:
     {
         {
             utf8_checker u;
-            BEAST_EXPECT(u.write(boost::asio::buffer("\xef\xbf\xbf", 3)));
+            BEAST_EXPECT(u.write(asio::buffer("\xef\xbf\xbf", 3)));
             BEAST_EXPECT(u.finish());
         }
         utf8_checker u;
@@ -284,7 +283,7 @@ public:
     void
     testFourByteSequence()
     {
-        using boost::asio::const_buffer;
+        using asio::const_buffer;
         utf8_checker u;
         std::uint8_t buf[4];
         // First byte valid range 240-244
@@ -476,13 +475,13 @@ public:
                 static std::size_t constexpr size = 3;
                 std::size_t n = s.size();
                 buffers_suffix<
-                    boost::asio::const_buffer> cb{
-                        boost::asio::const_buffer(s.data(), n)};
+                    asio::const_buffer> cb{
+                        asio::const_buffer(s.data(), n)};
                 multi_buffer b;
                 while(n)
                 {
                     auto const amount = (std::min)(n, size);
-                    b.commit(boost::asio::buffer_copy(
+                    b.commit(asio::buffer_copy(
                         b.prepare(amount), cb));
                     cb.consume(amount);
                     n -= amount;
@@ -551,4 +550,3 @@ BEAST_DEFINE_TESTSUITE(beast,websocket,utf8_checker);
 } // detail
 } // websocket
 } // beast
-} // boost

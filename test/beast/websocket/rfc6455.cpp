@@ -8,11 +8,10 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/websocket/rfc6455.hpp>
+#include <beast/websocket/rfc6455.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace websocket {
 
@@ -48,4 +47,3 @@ BEAST_DEFINE_TESTSUITE(beast,websocket,rfc6455);
 
 } // websocket
 } // beast
-} // boost

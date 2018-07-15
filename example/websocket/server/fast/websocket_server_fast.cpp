@@ -26,14 +26,14 @@
     https://github.com/crossbario/autobahn-testsuite
 */
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/spawn.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <beast/core.hpp>
+#include <beast/http.hpp>
+#include <beast/version.hpp>
+#include <beast/websocket.hpp>
+#include <asio/bind_executor.hpp>
+#include <asio/spawn.hpp>
+#include <asio/strand.hpp>
+#include <asio/ip/tcp.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <functional>
@@ -43,15 +43,15 @@
 #include <thread>
 #include <vector>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace http = boost::beast::http;            // from <boost/beast/http.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace http = beast::http;            // from <beast/http.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 //------------------------------------------------------------------------------
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << (std::string(what) + ": " + ec.message() + "\n");
 }
@@ -81,7 +81,7 @@ setup_stream(websocket::stream<NextLayer>& ws)
 void
 do_sync_session(tcp::socket& socket)
 {
-    boost::system::error_code ec;
+    std::error_code ec;
 
     websocket::stream<tcp::socket> ws{std::move(socket)};
     setup_stream(ws);
@@ -90,7 +90,7 @@ do_sync_session(tcp::socket& socket)
         [](websocket::response_type& res)
         {
             res.set(http::field::server,
-                "Boost.Beast/" + std::to_string(BOOST_BEAST_VERSION) + "-Sync");
+                "Boost.Beast/" + std::to_string(BEAST_VERSION) + "-Sync");
         },
         ec);
     if(ec)
@@ -98,7 +98,7 @@ do_sync_session(tcp::socket& socket)
 
     for(;;)
     {
-        boost::beast::multi_buffer buffer;
+        beast::multi_buffer buffer;
         
         ws.read(buffer, ec);
         if(ec == websocket::error::closed)
@@ -114,10 +114,10 @@ do_sync_session(tcp::socket& socket)
 
 void
 do_sync_listen(
-    boost::asio::io_context& ioc,
+    asio::io_context& ioc,
     tcp::endpoint endpoint)
 {
-    boost::system::error_code ec;
+    std::error_code ec;
     tcp::acceptor acceptor{ioc, endpoint};
     for(;;)
     {
@@ -139,9 +139,9 @@ do_sync_listen(
 class async_session : public std::enable_shared_from_this<async_session>
 {
     websocket::stream<tcp::socket> ws_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
-    boost::beast::multi_buffer buffer_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
+    beast::multi_buffer buffer_;
 
 public:
     // Take ownership of the socket
@@ -162,9 +162,9 @@ public:
             [](websocket::response_type& res)
             {
                 res.set(http::field::server,
-                    "Boost.Beast/" + std::to_string(BOOST_BEAST_VERSION) + "-Async");
+                    "Boost.Beast/" + std::to_string(BEAST_VERSION) + "-Async");
             },
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &async_session::on_accept,
@@ -173,7 +173,7 @@ public:
     }
 
     void
-    on_accept(boost::system::error_code ec)
+    on_accept(std::error_code ec)
     {
         if(ec)
             return fail(ec, "accept");
@@ -188,7 +188,7 @@ public:
         // Read a message into our buffer
         ws_.async_read(
             buffer_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &async_session::on_read,
@@ -199,7 +199,7 @@ public:
 
     void
     on_read(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -215,7 +215,7 @@ public:
         ws_.text(ws_.got_text());
         ws_.async_write(
             buffer_.data(),
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &async_session::on_write,
@@ -226,7 +226,7 @@ public:
 
     void
     on_write(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -245,20 +245,20 @@ public:
 // Accepts incoming connections and launches the sessions
 class async_listener : public std::enable_shared_from_this<async_listener>
 {
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
     tcp::acceptor acceptor_;
     tcp::socket socket_;
 
 public:
     async_listener(
-        boost::asio::io_context& ioc,
+        asio::io_context& ioc,
         tcp::endpoint endpoint)
         : strand_(ioc.get_executor())
         , acceptor_(ioc)
         , socket_(ioc)
     {
-        boost::system::error_code ec;
+        std::error_code ec;
 
         // Open the acceptor
         acceptor_.open(endpoint.protocol(), ec);
@@ -269,7 +269,7 @@ public:
         }
 
         // Allow address reuse
-        acceptor_.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        acceptor_.set_option(asio::socket_base::reuse_address(true), ec);
         if(ec)
         {
             fail(ec, "set_option");
@@ -286,7 +286,7 @@ public:
 
         // Start listening for connections
         acceptor_.listen(
-            boost::asio::socket_base::max_listen_connections, ec);
+            asio::socket_base::max_listen_connections, ec);
         if(ec)
         {
             fail(ec, "listen");
@@ -308,7 +308,7 @@ public:
     {
         acceptor_.async_accept(
             socket_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &async_listener::on_accept,
@@ -317,7 +317,7 @@ public:
     }
 
     void
-    on_accept(boost::system::error_code ec)
+    on_accept(std::error_code ec)
     {
         if(ec)
         {
@@ -337,9 +337,9 @@ public:
 //------------------------------------------------------------------------------
 
 void
-do_coro_session(tcp::socket& socket, boost::asio::yield_context yield)
+do_coro_session(tcp::socket& socket, asio::yield_context yield)
 {
-    boost::system::error_code ec;
+    std::error_code ec;
 
     websocket::stream<tcp::socket> ws{std::move(socket)};
     setup_stream(ws);
@@ -348,7 +348,7 @@ do_coro_session(tcp::socket& socket, boost::asio::yield_context yield)
         [&](websocket::response_type& res)
         {
             res.set(http::field::server,
-                "Boost.Beast/" + std::to_string(BOOST_BEAST_VERSION) + "-Coro");
+                "Boost.Beast/" + std::to_string(BEAST_VERSION) + "-Coro");
         },
         yield[ec]);
     if(ec)
@@ -356,7 +356,7 @@ do_coro_session(tcp::socket& socket, boost::asio::yield_context yield)
 
     for(;;)
     {
-        boost::beast::multi_buffer buffer;
+        beast::multi_buffer buffer;
 
         ws.async_read(buffer, yield[ec]);
         if(ec == websocket::error::closed)
@@ -373,18 +373,18 @@ do_coro_session(tcp::socket& socket, boost::asio::yield_context yield)
 
 void
 do_coro_listen(
-    boost::asio::io_context& ioc,
+    asio::io_context& ioc,
     tcp::endpoint endpoint,
-    boost::asio::yield_context yield)
+    asio::yield_context yield)
 {
-    boost::system::error_code ec;
+    std::error_code ec;
 
     tcp::acceptor acceptor(ioc);
     acceptor.open(endpoint.protocol(), ec);
     if(ec)
         return fail(ec, "open");
 
-    acceptor.set_option(boost::asio::socket_base::reuse_address(true), ec);
+    acceptor.set_option(asio::socket_base::reuse_address(true), ec);
     if(ec)
         return fail(ec, "set_option");
 
@@ -392,7 +392,7 @@ do_coro_listen(
     if(ec)
         return fail(ec, "bind");
 
-    acceptor.listen(boost::asio::socket_base::max_listen_connections, ec);
+    acceptor.listen(asio::socket_base::max_listen_connections, ec);
     if(ec)
         return fail(ec, "listen");
 
@@ -407,7 +407,7 @@ do_coro_listen(
             continue;
         }
 
-        boost::asio::spawn(
+        asio::spawn(
             acceptor.get_executor().context(),
             std::bind(
                 &do_coro_session,
@@ -433,12 +433,12 @@ int main(int argc, char* argv[])
             "    starting-port+2 for coroutine.\n";
         return EXIT_FAILURE;
     }
-    auto const address = boost::asio::ip::make_address(argv[1]);
+    auto const address = asio::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const threads = std::max<int>(1, std::atoi(argv[3]));
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{threads};
+    asio::io_context ioc{threads};
 
     // Create sync port
     std::thread(std::bind(
@@ -457,7 +457,7 @@ int main(int argc, char* argv[])
             static_cast<unsigned short>(port + 1u)})->run();
 
     // Create coro port
-    boost::asio::spawn(ioc,
+    asio::spawn(ioc,
         std::bind(
             &do_coro_listen,
             std::ref(ioc),

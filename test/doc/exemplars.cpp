@@ -7,15 +7,14 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/core/error.hpp>
-#include <boost/beast/core/file_base.hpp>
-#include <boost/beast/http/message.hpp>
-#include <boost/beast/http/type_traits.hpp>
+#include <beast/core/error.hpp>
+#include <beast/core/file_base.hpp>
+#include <beast/http/message.hpp>
+#include <beast/http/type_traits.hpp>
 #include <boost/optional.hpp>
 #include <cstdint>
 #include <utility>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -53,7 +52,7 @@ struct BodyWriter
 {
 public:
     /// The type of buffer returned by `get`.
-    using const_buffers_type = boost::asio::const_buffer;
+    using const_buffers_type = asio::const_buffer;
 
     /** Construct the writer.
 
@@ -164,7 +163,7 @@ struct BodyReader
         // The specification requires this to indicate "no error"
         ec = {};
 
-        return boost::asio::buffer_size(buffers);
+        return asio::buffer_size(buffers);
     }
 
     /** Called when the body is complete.
@@ -348,4 +347,3 @@ struct File
 
 } // http
 } // beast
-} // boost

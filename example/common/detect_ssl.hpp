@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_EXAMPLE_COMMON_DETECT_SSL_HPP
-#define BOOST_BEAST_EXAMPLE_COMMON_DETECT_SSL_HPP
+#ifndef BEAST_EXAMPLE_COMMON_DETECT_SSL_HPP
+#define BEAST_EXAMPLE_COMMON_DETECT_SSL_HPP
 
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
@@ -21,9 +21,9 @@
 
 //[example_core_detect_ssl_1
 
-#include <boost/beast/core.hpp>
-#include <boost/asio/coroutine.hpp>
-#include <boost/asio/executor_work_guard.hpp>
+#include <beast/core.hpp>
+#include <asio/coroutine.hpp>
+#include <asio/executor_work_guard.hpp>
 #include <boost/logic/tribool.hpp>
 
 /** Return `true` if a buffer contains a TLS/SSL client handshake.
@@ -64,17 +64,17 @@ is_ssl_handshake(
 {
     // Make sure buffers meets the requirements
     static_assert(
-        boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value,
+        asio::is_const_buffer_sequence<ConstBufferSequence>::value,
         "ConstBufferSequence requirements not met");
 
     // We need at least one byte to really do anything
-    if(boost::asio::buffer_size(buffers) < 1)
+    if(asio::buffer_size(buffers) < 1)
         return boost::indeterminate;
 
     // Extract the first byte, which holds the
     // "message" type for the Handshake protocol.
     unsigned char v;
-    boost::asio::buffer_copy(boost::asio::buffer(&v, 1), buffers);
+    asio::buffer_copy(asio::buffer(&v, 1), buffers);
 
     // Check that the message type is "SSL Handshake" (rfc2246)
     if(v != 0x16)
@@ -85,7 +85,7 @@ is_ssl_handshake(
 
     // At least four bytes are needed for the handshake
     // so make sure that we get them before returning `true`
-    if(boost::asio::buffer_size(buffers) < 4)
+    if(asio::buffer_size(buffers) < 4)
         return boost::indeterminate;
 
     // This can only be a TLS/SSL handshake
@@ -131,15 +131,15 @@ boost::tribool
 detect_ssl(
     SyncReadStream& stream,
     DynamicBuffer& buffer,
-    boost::beast::error_code& ec)
+    beast::error_code& ec)
 {
-    namespace beast = boost::beast;
+    namespace beast = beast;
 
     // Make sure arguments meet the requirements
     static_assert(beast::is_sync_read_stream<SyncReadStream>::value,
         "SyncReadStream requirements not met");
     static_assert(
-        boost::asio::is_dynamic_buffer<DynamicBuffer>::value,
+        asio::is_dynamic_buffer<DynamicBuffer>::value,
         "DynamicBuffer requirements not met");
 
     // Loop until an error occurs or we get a definitive answer
@@ -223,15 +223,15 @@ detect_ssl(
     Regardless of whether the asynchronous operation completes
     immediately or not, the handler will not be invoked from within
     this function. Invocation of the handler will be performed in a
-    manner equivalent to using `boost::asio::io_context::post`.
+    manner equivalent to using `asio::io_context::post`.
 */
 template<
     class AsyncReadStream,
     class DynamicBuffer,
     class CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(                      /*< `BOOST_ASIO_INITFN_RESULT_TYPE` customizes the return value based on the completion token >*/
+ASIO_INITFN_RESULT_TYPE(                      /*< `ASIO_INITFN_RESULT_TYPE` customizes the return value based on the completion token >*/
     CompletionToken,
-    void(boost::beast::error_code, boost::tribool)) /*< This is the signature for the completion handler >*/
+    void(beast::error_code, boost::tribool)) /*< This is the signature for the completion handler >*/
 async_detect_ssl(
     AsyncReadStream& stream,
     DynamicBuffer& buffer,
@@ -253,32 +253,32 @@ template<
     class AsyncReadStream,
     class DynamicBuffer,
     class CompletionToken>
-BOOST_ASIO_INITFN_RESULT_TYPE(
+ASIO_INITFN_RESULT_TYPE(
     CompletionToken,
-    void(boost::beast::error_code, boost::tribool))
+    void(beast::error_code, boost::tribool))
 async_detect_ssl(
     AsyncReadStream& stream,
     DynamicBuffer& buffer,
     CompletionToken&& token)
 {
-    namespace beast = boost::beast;
+    namespace beast = beast;
 
     // Make sure arguments meet the requirements
     static_assert(beast::is_async_read_stream<AsyncReadStream>::value,
         "SyncReadStream requirements not met");
     static_assert(
-        boost::asio::is_dynamic_buffer<DynamicBuffer>::value,
+        asio::is_dynamic_buffer<DynamicBuffer>::value,
         "DynamicBuffer requirements not met");
 
     // This helper manages some of the handler's lifetime and
     // uses the result and handler specializations associated with
     // the completion token to help customize the return value.
     //
-    boost::asio::async_completion<
+    asio::async_completion<
         CompletionToken, void(beast::error_code, boost::tribool)> init{token};
 
     // Create the composed operation and launch it. This is a constructor
-    // call followed by invocation of operator(). We use BOOST_ASIO_HANDLER_TYPE
+    // call followed by invocation of operator(). We use ASIO_HANDLER_TYPE
     // to convert the completion token into the correct handler type,
     // allowing user defined specializations of the async result template
     // to take effect.
@@ -286,13 +286,13 @@ async_detect_ssl(
     detect_ssl_op<
         AsyncReadStream,
         DynamicBuffer,
-        BOOST_ASIO_HANDLER_TYPE(
+        ASIO_HANDLER_TYPE(
             CompletionToken, void(beast::error_code, boost::tribool))>{
                 stream, buffer, init.completion_handler}(beast::error_code{}, 0);
 
     // This hook lets the caller see a return value when appropriate.
     // For example this might return std::future<error_code, boost::tribool> if
-    // CompletionToken is boost::asio::use_future.
+    // CompletionToken is asio::use_future.
     //
     // If a coroutine is used for the token, the return value from
     // this function will be the `boost::tribool` representing the result.
@@ -313,7 +313,7 @@ template<
     class AsyncReadStream,
     class DynamicBuffer,
     class Handler>
-class detect_ssl_op : public boost::asio::coroutine
+class detect_ssl_op : public asio::coroutine
 {
     // This composed operation has trivial state,
     // so it is just kept inside the class and can
@@ -325,7 +325,7 @@ class detect_ssl_op : public boost::asio::coroutine
     // type executor_work_guard<T>, where T is the type of
     // executor returned by the stream's get_executor function,
     // to persist for the duration of the asynchronous operation.
-    boost::asio::executor_work_guard<
+    asio::executor_work_guard<
         decltype(std::declval<AsyncReadStream&>().get_executor())> work_;
 
     DynamicBuffer& buffer_;
@@ -358,12 +358,12 @@ public:
     // as the final handler. These declarations achieve that.
 
     using allocator_type =
-        boost::asio::associated_allocator_t<Handler>;
+        asio::associated_allocator_t<Handler>;
 
     allocator_type
     get_allocator() const noexcept
     {
-        return (boost::asio::get_associated_allocator)(handler_);
+        return (asio::get_associated_allocator)(handler_);
     }
 
     // Executor hook. This is Asio's system for customizing the
@@ -372,18 +372,18 @@ public:
     // intermediate completion handlers as that used to invoke the
     // final handler.
 
-    using executor_type = boost::asio::associated_executor_t<
+    using executor_type = asio::associated_executor_t<
         Handler, decltype(std::declval<AsyncReadStream&>().get_executor())>;
 
     executor_type get_executor() const noexcept
     {
-        return (boost::asio::get_associated_executor)(handler_, stream_.get_executor());
+        return (asio::get_associated_executor)(handler_, stream_.get_executor());
     }
 
     // Our main entry point. This will get called as our
     // intermediate operations complete. Definition below.
     //
-    void operator()(boost::beast::error_code ec, std::size_t bytes_transferred);
+    void operator()(beast::error_code ec, std::size_t bytes_transferred);
 };
 
 //]
@@ -400,12 +400,12 @@ template<
     class Handler>
 void
 detect_ssl_op<AsyncStream, DynamicBuffer, Handler>::
-operator()(boost::beast::error_code ec, std::size_t bytes_transferred)
+operator()(beast::error_code ec, std::size_t bytes_transferred)
 {
-    namespace beast = boost::beast;
+    namespace beast = beast;
 
     // This introduces the scope of the stackless coroutine
-    BOOST_ASIO_CORO_REENTER(*this)
+    ASIO_CORO_REENTER(*this)
     {
         // There could already be data in the buffer
         // so we do this first, before reading from the stream.
@@ -421,8 +421,8 @@ operator()(boost::beast::error_code ec, std::size_t bytes_transferred)
             // `bind_handler` lets us bind arguments in a safe way
             // that preserves the type customization hooks of the
             // original handler.
-            BOOST_ASIO_CORO_YIELD
-            boost::asio::post(
+            ASIO_CORO_YIELD
+            asio::post(
                 stream_.get_executor(),
                 beast::bind_handler(std::move(*this), ec, 0));
         }
@@ -434,7 +434,7 @@ operator()(boost::beast::error_code ec, std::size_t bytes_transferred)
                 // The algorithm should never need more than 4 bytes
                 BOOST_ASSERT(buffer_.size() < 4);
 
-                BOOST_ASIO_CORO_YIELD
+                ASIO_CORO_YIELD
                 {
                     // Prepare the buffer's output area.
                     auto const mutable_buffer = buffer_.prepare(beast::read_size(buffer_, 1536));

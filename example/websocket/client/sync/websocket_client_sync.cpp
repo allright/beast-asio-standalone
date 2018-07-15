@@ -15,16 +15,16 @@
 
 //[example_websocket_client
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <asio/connect.hpp>
+#include <asio/ip/tcp.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 // Sends a WebSocket message and prints the response
 int main(int argc, char** argv)
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
         auto const text = argv[3];
 
         // The io_context is required for all I/O
-        boost::asio::io_context ioc;
+        asio::io_context ioc;
 
         // These objects perform our I/O
         tcp::resolver resolver{ioc};
@@ -55,16 +55,16 @@ int main(int argc, char** argv)
         auto const results = resolver.resolve(host, port);
 
         // Make the connection on the IP address we get from a lookup
-        boost::asio::connect(ws.next_layer(), results.begin(), results.end());
+        asio::connect(ws.next_layer(), results.begin(), results.end());
 
         // Perform the websocket handshake
         ws.handshake(host, "/");
 
         // Send the message
-        ws.write(boost::asio::buffer(std::string(text)));
+        ws.write(asio::buffer(std::string(text)));
 
         // This buffer will hold the incoming message
-        boost::beast::multi_buffer buffer;
+        beast::multi_buffer buffer;
 
         // Read a message into our buffer
         ws.read(buffer);
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
         // If we get here then the connection is closed gracefully
 
         // The buffers() function helps print a ConstBufferSequence
-        std::cout << boost::beast::buffers(buffer.data()) << std::endl;
+        std::cout << beast::buffers(buffer.data()) << std::endl;
     }
     catch(std::exception const& e)
     {

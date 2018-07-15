@@ -201,7 +201,7 @@ about Beast and other HTTP libraries that have gone through formal review.
     etc."
 ][
     Beast works with the Stream concept, so it automatically works with the
-    `boost::asio::ssl::stream` that you have already set up through Asio.
+    `asio::ssl::stream` that you have already set up through Asio.
 ]]
 
 [[
@@ -264,8 +264,8 @@ about Beast and other HTTP libraries that have gone through formal review.
     Where is the WebSocket TLS/SSL interface?
 ][
     The `websocket::stream` wraps the socket or stream that you provide
-    (for example, a `boost::asio::ip::tcp::socket` or a
-    `boost::asio::ssl::stream`). You establish your TLS connection using the
+    (for example, a `asio::ip::tcp::socket` or a
+    `asio::ssl::stream`). You establish your TLS connection using the
     interface on `ssl::stream` like shown in all of the Asio examples, then
     construct your `websocket::stream` around it. It works perfectly fine;
     Beast comes with an `ssl_stream` wrapper in the example directory which

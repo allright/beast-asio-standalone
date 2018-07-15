@@ -7,17 +7,16 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_SUITE_LIST_HPP
-#define BOOST_BEAST_UNIT_TEST_SUITE_LIST_HPP
+#ifndef BEAST_UNIT_TEST_SUITE_LIST_HPP
+#define BEAST_UNIT_TEST_SUITE_LIST_HPP
 
-#include <boost/beast/unit_test/suite_info.hpp>
-#include <boost/beast/unit_test/detail/const_container.hpp>
+#include <beast/unit_test/suite_info.hpp>
+#include <beast/unit_test/detail/const_container.hpp>
 #include <boost/assert.hpp>
 #include <typeindex>
 #include <set>
 #include <unordered_set>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -75,7 +74,6 @@ suite_list::insert(
 
 } // unit_test
 } // beast
-} // boost
 
 #endif
 

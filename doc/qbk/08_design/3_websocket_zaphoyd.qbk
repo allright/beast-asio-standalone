@@ -57,7 +57,7 @@ The type requirements for instantiating `beast::websocket::stream` versus
 (18 functions versus 2). Note that websocketpp connections are passed by
 `shared_ptr`. Beast does not use `shared_ptr` anywhere in its public interface.
 A `beast::websocket::stream` is constructible and movable in a manner identical
-to a `boost::asio::ip::tcp::socket`. Callers can put such objects in a
+to a `asio::ip::tcp::socket`. Callers can put such objects in a
 `shared_ptr` if they want to, but there is no requirement to do so.
 
 [table
@@ -235,7 +235,7 @@ allocator.
 
 Beast allows callers to specify the object for receiving the message
 or frame data, which is of any type meeting the requirements of
-__DynamicBuffer__ (modeled after `boost::asio::streambuf`).
+__DynamicBuffer__ (modeled after `asio::streambuf`).
 
 Beast comes with the class __basic_multi_buffer__, an efficient
 implementation of the __DynamicBuffer__ concept which makes use of multiple
@@ -288,7 +288,7 @@ memory-mapped regions (not possible in websocketpp). Callers can also
 use the same buffers to send data to multiple streams, for example
 broadcasting common subscription data to many clients at once. For
 each call to `async_write` the completion handler is called once when
-the data finishes sending, in a manner identical to `boost::asio::async_write`.
+the data finishes sending, in a manner identical to `asio::async_write`.
 
 [table
     [
@@ -372,9 +372,9 @@ websocketpp offers the `endpoint` class which can handle binding and
 listening to a port, and spawning connection objects.
 
 Beast does not reinvent the wheel here, callers use the interfaces
-already in `boost::asio` for receiving incoming connections resolving
+already in `asio` for receiving incoming connections resolving
 host names, or establishing outgoing connections. After the socket (or
-`boost::asio::ssl::stream`) is connected, the `beast::websocket::stream`
+`asio::ssl::stream`) is connected, the `beast::websocket::stream`
 is constructed around it and the WebSocket handshake can be performed.
 
 Beast users are free to implement their own "connection manager", but
@@ -387,7 +387,7 @@ there is no requirement to do so.
         [[@https://github.com/zaphoyd/websocketpp/blob/378437aecdcb1dfe62096ffd5d944bf1f640ccc3/websocketpp/transport/asio/endpoint.hpp#L52 websocketpp]]
     ][
         [```
-            #include <boost/asio.hpp>
+            #include <asio.hpp>
         ```]
         [```
             template <typename config>

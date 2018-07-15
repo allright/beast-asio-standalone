@@ -7,8 +7,8 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/websocket/detail/utf8_checker.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/websocket/detail/utf8_checker.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <chrono>
 #include <random>
 
@@ -20,7 +20,6 @@
 #include <boost/locale.hpp>
 #endif
 
-namespace boost {
 namespace beast {
 
 class utf8_checker_test : public beast::unit_test::suite
@@ -153,5 +152,4 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,benchmarks,utf8_checker);
 
 } // beast
-} // boost
 

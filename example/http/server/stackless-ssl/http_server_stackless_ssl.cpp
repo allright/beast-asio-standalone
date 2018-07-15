@@ -15,14 +15,14 @@
 
 #include "example/common/server_certificate.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/coroutine.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ssl/stream.hpp>
-#include <boost/asio/strand.hpp>
+#include <beast/core.hpp>
+#include <beast/http.hpp>
+#include <beast/version.hpp>
+#include <asio/bind_executor.hpp>
+#include <asio/coroutine.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/ssl/stream.hpp>
+#include <asio/strand.hpp>
 #include <boost/config.hpp>
 #include <algorithm>
 #include <cstdlib>
@@ -33,20 +33,20 @@
 #include <thread>
 #include <vector>
 
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
-namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
+using tcp = asio::ip::tcp;       // from <asio/ip/tcp.hpp>
+namespace ssl = asio::ssl;       // from <asio/ssl.hpp>
+namespace http = beast::http;    // from <beast/http.hpp>
 
 // Return a reasonable mime type based on the extension of a file.
-boost::beast::string_view
-mime_type(boost::beast::string_view path)
+beast::string_view
+mime_type(beast::string_view path)
 {
-    using boost::beast::iequals;
+    using beast::iequals;
     auto const ext = [&path]
     {
         auto const pos = path.rfind(".");
-        if(pos == boost::beast::string_view::npos)
-            return boost::beast::string_view{};
+        if(pos == beast::string_view::npos)
+            return beast::string_view{};
         return path.substr(pos);
     }();
     if(iequals(ext, ".htm"))  return "text/html";
@@ -77,8 +77,8 @@ mime_type(boost::beast::string_view path)
 // The returned path is normalized for the platform.
 std::string
 path_cat(
-    boost::beast::string_view base,
-    boost::beast::string_view path)
+    beast::string_view base,
+    beast::string_view path)
 {
     if(base.empty())
         return path.to_string();
@@ -109,16 +109,16 @@ template<
     class Send>
 void
 handle_request(
-    boost::beast::string_view doc_root,
+    beast::string_view doc_root,
     http::request<Body, http::basic_fields<Allocator>>&& req,
     Send&& send)
 {
     // Returns a bad request response
     auto const bad_request =
-    [&req](boost::beast::string_view why)
+    [&req](beast::string_view why)
     {
         http::response<http::string_body> res{http::status::bad_request, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
         res.body() = why.to_string();
@@ -128,10 +128,10 @@ handle_request(
 
     // Returns a not found response
     auto const not_found =
-    [&req](boost::beast::string_view target)
+    [&req](beast::string_view target)
     {
         http::response<http::string_body> res{http::status::not_found, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
         res.body() = "The resource '" + target.to_string() + "' was not found.";
@@ -141,10 +141,10 @@ handle_request(
 
     // Returns a server error response
     auto const server_error =
-    [&req](boost::beast::string_view what)
+    [&req](beast::string_view what)
     {
         http::response<http::string_body> res{http::status::internal_server_error, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
         res.body() = "An error occurred: '" + what.to_string() + "'";
@@ -160,7 +160,7 @@ handle_request(
     // Request path must be absolute and not contain "..".
     if( req.target().empty() ||
         req.target()[0] != '/' ||
-        req.target().find("..") != boost::beast::string_view::npos)
+        req.target().find("..") != beast::string_view::npos)
         return send(bad_request("Illegal request-target"));
 
     // Build the path to the requested file
@@ -169,12 +169,12 @@ handle_request(
         path.append("index.html");
 
     // Attempt to open the file
-    boost::beast::error_code ec;
+    beast::error_code ec;
     http::file_body::value_type body;
-    body.open(path.c_str(), boost::beast::file_mode::scan, ec);
+    body.open(path.c_str(), beast::file_mode::scan, ec);
 
     // Handle the case where the file doesn't exist
-    if(ec == boost::system::errc::no_such_file_or_directory)
+    if(ec == std::errc::no_such_file_or_directory)
         return send(not_found(req.target()));
 
     // Handle an unknown error
@@ -188,7 +188,7 @@ handle_request(
     if(req.method() == http::verb::head)
     {
         http::response<http::empty_body> res{http::status::ok, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, mime_type(path));
         res.content_length(size);
         res.keep_alive(req.keep_alive());
@@ -200,7 +200,7 @@ handle_request(
         std::piecewise_construct,
         std::make_tuple(std::move(body)),
         std::make_tuple(http::status::ok, req.version())};
-    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+    res.set(http::field::server, BEAST_VERSION_STRING);
     res.set(http::field::content_type, mime_type(path));
     res.content_length(size);
     res.keep_alive(req.keep_alive());
@@ -211,14 +211,14 @@ handle_request(
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
 
 // Handles an HTTP server connection
 class session
-    : public boost::asio::coroutine
+    : public asio::coroutine
     , public std::enable_shared_from_this<session>
 {
     // This is the C++11 equivalent of a generic lambda.
@@ -251,7 +251,7 @@ class session
             http::async_write(
                 self_.socket_,
                 *sp,
-                boost::asio::bind_executor(
+                asio::bind_executor(
                     self_.strand_,
                     std::bind(
                         &session::loop,
@@ -264,9 +264,9 @@ class session
 
     tcp::socket socket_;
     ssl::stream<tcp::socket&> stream_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
-    boost::beast::flat_buffer buffer_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
+    beast::flat_buffer buffer_;
     std::shared_ptr<std::string const> doc_root_;
     http::request<http::string_body> req_;
     std::shared_ptr<void> res_;
@@ -294,10 +294,10 @@ public:
         loop({}, 0, false);
     }
 
-#include <boost/asio/yield.hpp>
+#include <asio/yield.hpp>
     void
     loop(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred,
         bool close)
     {
@@ -307,7 +307,7 @@ public:
             // Perform the SSL handshake
             yield stream_.async_handshake(
                 ssl::stream_base::server,
-                boost::asio::bind_executor(
+                asio::bind_executor(
                     strand_,
                     std::bind(
                         &session::loop,
@@ -326,7 +326,7 @@ public:
 
                 // Read a request
                 yield http::async_read(stream_, buffer_, req_,
-                    boost::asio::bind_executor(
+                    asio::bind_executor(
                         strand_,
                         std::bind(
                             &session::loop,
@@ -359,7 +359,7 @@ public:
 
             // Perform the SSL shutdown
             yield stream_.async_shutdown(
-                boost::asio::bind_executor(
+                asio::bind_executor(
                     strand_,
                     std::bind(
                         &session::loop,
@@ -373,14 +373,14 @@ public:
             // At this point the connection is closed gracefully
         }
     }
-#include <boost/asio/unyield.hpp>
+#include <asio/unyield.hpp>
 };
 
 //------------------------------------------------------------------------------
 
 // Accepts incoming connections and launches the sessions
 class listener
-    : public boost::asio::coroutine
+    : public asio::coroutine
     , public std::enable_shared_from_this<listener>
 {
     ssl::context& ctx_;
@@ -390,7 +390,7 @@ class listener
 
 public:
     listener(
-        boost::asio::io_context& ioc,
+        asio::io_context& ioc,
         ssl::context& ctx,
         tcp::endpoint endpoint,
         std::shared_ptr<std::string const> const& doc_root)
@@ -399,7 +399,7 @@ public:
         , socket_(ioc)
         , doc_root_(doc_root)
     {
-        boost::system::error_code ec;
+        std::error_code ec;
 
         // Open the acceptor
         acceptor_.open(endpoint.protocol(), ec);
@@ -410,7 +410,7 @@ public:
         }
 
         // Allow address reuse
-        acceptor_.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        acceptor_.set_option(asio::socket_base::reuse_address(true), ec);
         if(ec)
         {
             fail(ec, "set_option");
@@ -427,7 +427,7 @@ public:
 
         // Start listening for connections
         acceptor_.listen(
-            boost::asio::socket_base::max_listen_connections, ec);
+            asio::socket_base::max_listen_connections, ec);
         if(ec)
         {
             fail(ec, "listen");
@@ -444,9 +444,9 @@ public:
         loop();
     }
 
-#include <boost/asio/yield.hpp>
+#include <asio/yield.hpp>
     void
-    loop(boost::system::error_code ec = {})
+    loop(std::error_code ec = {})
     {
         reenter(*this)
         {
@@ -473,7 +473,7 @@ public:
             }
         }
     }
-#include <boost/asio/unyield.hpp>
+#include <asio/unyield.hpp>
 };
 
 //------------------------------------------------------------------------------
@@ -489,13 +489,13 @@ int main(int argc, char* argv[])
             "    http-server-stackless-ssl 0.0.0.0 8080 . 1\n";
         return EXIT_FAILURE;
     }
-    auto const address = boost::asio::ip::make_address(argv[1]);
+    auto const address = asio::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const doc_root = std::make_shared<std::string>(argv[3]);
     auto const threads = std::max<int>(1, std::atoi(argv[4]));
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{threads};
+    asio::io_context ioc{threads};
 
     // The SSL context is required, and holds certificates
     ssl::context ctx{ssl::context::sslv23};

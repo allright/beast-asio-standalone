@@ -8,27 +8,26 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/write.hpp>
+#include <beast/http/write.hpp>
 
-#include <boost/beast/http/buffer_body.hpp>
-#include <boost/beast/http/empty_body.hpp>
-#include <boost/beast/http/fields.hpp>
-#include <boost/beast/http/message.hpp>
-#include <boost/beast/http/read.hpp>
-#include <boost/beast/http/string_body.hpp>
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/error.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/test/yield_to.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/error.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/strand.hpp>
+#include <beast/http/buffer_body.hpp>
+#include <beast/http/empty_body.hpp>
+#include <beast/http/fields.hpp>
+#include <beast/http/message.hpp>
+#include <beast/http/read.hpp>
+#include <beast/http/string_body.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/error.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/test/yield_to.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/error.hpp>
+#include <asio/io_context.hpp>
+#include <asio/strand.hpp>
 #include <sstream>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -47,7 +46,7 @@ public:
 
         public:
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             writer(
@@ -92,7 +91,7 @@ public:
 
         public:
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             writer(
@@ -124,7 +123,7 @@ public:
                 std::false_type,    // isSplit
                 std::false_type)    // isFinalEmpty
             {
-                using boost::asio::buffer;
+                using asio::buffer;
                 if(body_.s.empty())
                     return boost::none;
                 return {{buffer(body_.s.data(), body_.s.size()), false}};
@@ -135,7 +134,7 @@ public:
                 std::false_type,    // isSplit
                 std::true_type)     // isFinalEmpty
             {
-                using boost::asio::buffer;
+                using asio::buffer;
                 if(body_.s.empty())
                     return boost::none;
                 switch(step_)
@@ -154,7 +153,7 @@ public:
                 std::true_type,     // isSplit
                 std::false_type)    // isFinalEmpty
             {
-                using boost::asio::buffer;
+                using asio::buffer;
                 auto const n = (body_.s.size() + 1) / 2;
                 switch(step_)
                 {
@@ -175,7 +174,7 @@ public:
                 std::true_type,     // isSplit
                 std::true_type)     // isFinalEmpty
             {
-                using boost::asio::buffer;
+                using asio::buffer;
                 auto const n = (body_.s.size() + 1) / 2;
                 switch(step_)
                 {
@@ -229,7 +228,7 @@ public:
 
         public:
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             explicit
@@ -636,7 +635,7 @@ public:
         {
             // Make sure handlers are not destroyed
             // after calling io_context::stop
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             test::stream ts{ioc};
             BEAST_EXPECT(handler::count() == 0);
             request<string_body> m;
@@ -658,7 +657,7 @@ public:
             // Make sure uninvoked handlers are
             // destroyed when calling ~io_context
             {
-                boost::asio::io_context ioc;
+                asio::io_context ioc;
                 test::stream ts{ioc}, tr{ioc};
                 ts.connect(tr);
                 BEAST_EXPECT(handler::count() == 0);
@@ -718,7 +717,7 @@ public:
 
     template<class Body>
     void
-    testWriteStream(boost::asio::yield_context yield)
+    testWriteStream(asio::yield_context yield)
     {
         test::stream ts{ioc_}, tr{ioc_};
         ts.connect(tr);
@@ -836,7 +835,7 @@ public:
     void
     testIssue655()
     {
-        boost::asio::io_context ioc;
+        asio::io_context ioc;
         test::stream ts{ioc}, tr{ioc};
         ts.connect(tr);
         response<empty_body> res;
@@ -865,8 +864,8 @@ public:
         // breakpoint in asio_handler_invoke to make sure
         // it is instantiated.
         {
-            boost::asio::io_context ioc;
-            boost::asio::io_service::strand s{ioc};
+            asio::io_context ioc;
+            asio::io_context::strand s{ioc};
             test::stream ts{ioc};
             flat_buffer b;
             request<empty_body> m;
@@ -874,8 +873,8 @@ public:
             async_write_some(ts, sr, s.wrap(copyable_handler{}));
         }
         {
-            boost::asio::io_context ioc;
-            boost::asio::io_service::strand s{ioc};
+            asio::io_context ioc;
+            asio::io_context::strand s{ioc};
             test::stream ts{ioc};
             flat_buffer b;
             request<empty_body> m;
@@ -883,8 +882,8 @@ public:
             async_write(ts, sr, s.wrap(copyable_handler{}));
         }
         {
-            boost::asio::io_context ioc;
-            boost::asio::io_service::strand s{ioc};
+            asio::io_context ioc;
+            asio::io_context::strand s{ioc};
             test::stream ts{ioc};
             flat_buffer b;
             request<empty_body> m;
@@ -899,7 +898,7 @@ public:
         struct writer
         {
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             writer(
@@ -930,7 +929,7 @@ public:
         struct writer
         {
             using const_buffers_type =
-                boost::asio::const_buffer;
+                asio::const_buffer;
 
             template<bool isRequest, class Fields>
             writer(
@@ -1023,4 +1022,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,write);
 
 } // http
 } // beast
-} // boost

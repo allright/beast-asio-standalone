@@ -8,12 +8,11 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/string_param.hpp>
+#include <beast/core/string_param.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/beast/core/detail/type_traits.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <beast/core/detail/type_traits.hpp>
 
-namespace boost {
 namespace beast {
 
 class string_param_test : public unit_test::suite
@@ -80,4 +79,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,string_param);
 
 } // beast
-} // boost

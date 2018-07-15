@@ -8,14 +8,13 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/handler_ptr.hpp>
+#include <beast/core/handler_ptr.hpp>
 
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <exception>
 #include <memory>
 #include <utility>
 
-namespace boost {
 namespace beast {
 
 class handler_ptr_test : public beast::unit_test::suite
@@ -120,4 +119,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,handler_ptr);
 
 } // beast
-} // boost

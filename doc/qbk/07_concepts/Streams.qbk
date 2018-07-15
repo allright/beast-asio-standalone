@@ -10,7 +10,7 @@
 [section:streams Streams]
 
 Stream types represent objects capable of performing synchronous or
-asynchronous I/O. They are based on concepts from `boost::asio`.
+asynchronous I/O. They are based on concepts from `asio`.
 
 [heading:Stream Stream]
 

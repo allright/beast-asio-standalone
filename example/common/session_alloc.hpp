@@ -7,12 +7,12 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_EXAMPLE_COMMON_SESSION_ALLOC_HPP
-#define BOOST_BEAST_EXAMPLE_COMMON_SESSION_ALLOC_HPP
+#ifndef BEAST_EXAMPLE_COMMON_SESSION_ALLOC_HPP
+#define BEAST_EXAMPLE_COMMON_SESSION_ALLOC_HPP
 
-#include <boost/asio/associated_allocator.hpp>
-#include <boost/asio/associated_executor.hpp>
-#include <boost/asio/handler_continuation_hook.hpp>
+#include <asio/associated_allocator.hpp>
+#include <asio/associated_executor.hpp>
+#include <asio/handler_continuation_hook.hpp>
 #include <boost/assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <boost/intrusive/list.hpp>
@@ -355,7 +355,7 @@ class session_alloc_wrapper
     // Can't friend partial specializations,
     // so we just friend the whole thing.
     template<class U, class Executor>
-    friend struct boost::asio::associated_executor;
+    friend struct asio::associated_executor;
 
     Handler h_;
     session_alloc<char> alloc_;
@@ -389,7 +389,7 @@ public:
     bool
     asio_handler_is_continuation(session_alloc_wrapper* w)
     {
-        using boost::asio::asio_handler_is_continuation;
+        using asio::asio_handler_is_continuation;
         return asio_handler_is_continuation(std::addressof(w->h_));
     }
 };
@@ -421,7 +421,6 @@ wrap(Handler&& handler) ->
 
 //------------------------------------------------------------------------------
 
-namespace boost {
 namespace asio {
 template<class Handler, class Executor>
 struct associated_executor<
@@ -441,6 +440,5 @@ struct associated_executor<
 };
 
 } // asio
-} // boost
 
 #endif

@@ -11,18 +11,17 @@
 
 #include "test/beast/http/message_fuzz.hpp"
 
-#include <boost/beast/http.hpp>
-#include <boost/beast/core/buffers_suffix.hpp>
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/core/flat_buffer.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/http.hpp>
+#include <beast/core/buffers_suffix.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/core/flat_buffer.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <chrono>
 #include <iostream>
 #include <vector>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -76,7 +75,7 @@ public:
         basic_parser<isRequest, Derived>& parser,
             error_code& ec)
     {
-        using boost::asio::buffer_size;
+        using asio::buffer_size;
         beast::buffers_suffix<
             ConstBufferSequence> cb{buffers};
         std::size_t used = 0;
@@ -158,7 +157,7 @@ public:
         isRequest, bench_parser<isRequest, Body, Fields>>
     {
         using mutable_buffers_type =
-            boost::asio::mutable_buffer;
+            asio::mutable_buffer;
 
         void
         on_request_impl(verb, string_view,
@@ -290,5 +289,4 @@ BEAST_DEFINE_TESTSUITE(beast,benchmarks,parser);
 
 } // http
 } // beast
-} // boost
 

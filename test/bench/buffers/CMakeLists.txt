@@ -13,7 +13,7 @@ GroupSources(include/boost/beast beast)
 GroupSources(test/bench/buffers "/")
 
 add_executable (bench-buffers
-    ${BOOST_BEAST_FILES}
+    ${BEAST_FILES}
     ${EXTRAS_FILES}
     ${TEST_MAIN}
     Jamfile

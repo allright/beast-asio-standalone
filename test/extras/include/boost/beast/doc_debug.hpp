@@ -5,12 +5,12 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef BOOST_BEAST_DOC_DEBUG_HPP
-#define BOOST_BEAST_DOC_DEBUG_HPP
+#ifndef BEAST_DOC_DEBUG_HPP
+#define BEAST_DOC_DEBUG_HPP
 
 namespace beast {
 
-#if BOOST_BEAST_DOXYGEN
+#if BEAST_DOXYGEN
 
 /// doc type (documentation debug helper)
 using doc_type = int;

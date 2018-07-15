@@ -7,12 +7,11 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_GLOBAL_SUITES_HPP
-#define BOOST_BEAST_UNIT_TEST_GLOBAL_SUITES_HPP
+#ifndef BEAST_UNIT_TEST_GLOBAL_SUITES_HPP
+#define BEAST_UNIT_TEST_GLOBAL_SUITES_HPP
 
-#include <boost/beast/unit_test/suite_list.hpp>
+#include <beast/unit_test/suite_list.hpp>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -50,6 +49,5 @@ global_suites()
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

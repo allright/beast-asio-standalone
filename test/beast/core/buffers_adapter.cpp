@@ -8,17 +8,16 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/buffers_adapter.hpp>
+#include <beast/core/buffers_adapter.hpp>
 
 #include "buffer_test.hpp"
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/buffer.hpp>
-#include <boost/asio/streambuf.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/buffer.hpp>
+#include <asio/streambuf.hpp>
 #include <iterator>
 
-namespace boost {
 namespace beast {
 
 class buffers_adapter_test : public unit_test::suite
@@ -26,10 +25,10 @@ class buffers_adapter_test : public unit_test::suite
 public:
     void testBuffersAdapter()
     {
-        using boost::asio::buffer;
-        using boost::asio::buffer_size;
-        using boost::asio::const_buffer;
-        using boost::asio::mutable_buffer;
+        using asio::buffer;
+        using asio::buffer_size;
+        using asio::const_buffer;
+        using asio::mutable_buffer;
         char buf[12];
         std::string const s = "Hello, world";
         BEAST_EXPECT(s.size() == sizeof(buf));
@@ -141,9 +140,9 @@ public:
     }
     void testCommit()
     {
-        using boost::asio::buffer_size;
+        using asio::buffer_size;
         {
-            using sb_type = boost::asio::streambuf;
+            using sb_type = asio::streambuf;
             sb_type b;
             buffers_adapter<
                 sb_type::mutable_buffers_type> ba(b.prepare(3));
@@ -171,7 +170,7 @@ public:
     void
     testIssue386()
     {
-        using type = boost::asio::streambuf;
+        using type = asio::streambuf;
         type buffer;
         buffers_adapter<
             type::mutable_buffers_type> ba{buffer.prepare(512)};
@@ -189,4 +188,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,buffers_adapter);
 
 } // beast
-} // boost

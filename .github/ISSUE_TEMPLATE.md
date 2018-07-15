@@ -8,7 +8,7 @@ When reporting a bug please include the following:
 
 ### Version of Beast
 
-You can find the version number in the file `<boost/beast/version.hpp>`,
+You can find the version number in the file `<beast/version.hpp>`,
 or by using the command "git log -1" in the local Beast repository
 directory.
 

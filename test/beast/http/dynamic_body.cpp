@@ -8,24 +8,23 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/dynamic_body.hpp>
+#include <beast/http/dynamic_body.hpp>
 
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/ostream.hpp>
-#include <boost/beast/http/fields.hpp>
-#include <boost/beast/http/parser.hpp>
-#include <boost/beast/http/read.hpp>
-#include <boost/beast/http/write.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/ostream.hpp>
+#include <beast/http/fields.hpp>
+#include <beast/http/parser.hpp>
+#include <beast/http/read.hpp>
+#include <beast/http/write.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/unit_test/suite.hpp>
 
-namespace boost {
 namespace beast {
 namespace http {
 
 class dynamic_body_test : public beast::unit_test::suite
 {
-    boost::asio::io_context ioc_;
+    asio::io_context ioc_;
 
 public:
     template<bool isRequest, class Body, class Fields>
@@ -61,4 +60,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,dynamic_body);
 
 } // http
 } // beast
-} // boost

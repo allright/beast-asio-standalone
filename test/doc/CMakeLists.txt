@@ -14,7 +14,7 @@ GroupSources(include/boost/beast beast)
 GroupSources(test/doc "/")
 
 add_executable (tests-doc
-    ${BOOST_BEAST_FILES}
+    ${BEAST_FILES}
     ${EXTRAS_FILES}
     ${TEST_MAIN}
     Jamfile

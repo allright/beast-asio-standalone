@@ -15,14 +15,14 @@
 
 #include "urls_large_data.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/post.hpp>
-#include <boost/asio/strand.hpp>
+#include <beast/core.hpp>
+#include <beast/http.hpp>
+#include <beast/version.hpp>
+#include <asio/bind_executor.hpp>
+#include <asio/connect.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/post.hpp>
+#include <asio/strand.hpp>
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
@@ -35,8 +35,8 @@
 #include <vector>
 #include <map>
 
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
+using tcp = asio::ip::tcp;       // from <asio/ip/tcp.hpp>
+namespace http = beast::http;    // from <beast/http.hpp>
 namespace chrono = std::chrono;         // from <chrono>
 
 //------------------------------------------------------------------------------
@@ -44,15 +44,15 @@ namespace chrono = std::chrono;         // from <chrono>
 // This structure aggregates statistics on all the sites
 class crawl_report
 {
-    boost::asio::io_context& ioc_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
+    asio::io_context& ioc_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
     std::atomic<std::size_t> index_;
     std::vector<char const*> const& hosts_;
     std::size_t count_ = 0;
 
 public:
-    crawl_report(boost::asio::io_context& ioc)
+    crawl_report(asio::io_context& ioc)
         : ioc_(ioc)
         , strand_(ioc_.get_executor())
         , index_(0)
@@ -66,7 +66,7 @@ public:
     void
     aggregate(F const& f)
     {
-        boost::asio::post(
+        asio::post(
             strand_,
             [&, f]
             {
@@ -150,10 +150,10 @@ class worker : public std::enable_shared_from_this<worker>
     crawl_report& report_;
     tcp::resolver resolver_;
     tcp::socket socket_;
-    boost::asio::steady_timer timer_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
-    boost::beast::flat_buffer buffer_; // (Must persist between reads)
+    asio::steady_timer timer_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
+    beast::flat_buffer buffer_; // (Must persist between reads)
     http::request<http::empty_body> req_;
     http::response<http::string_body> res_;
 
@@ -163,7 +163,7 @@ public:
     // Resolver and socket require an io_context
     worker(
         crawl_report& report,
-        boost::asio::io_context& ioc)
+        asio::io_context& ioc)
         : report_(report)
         , resolver_(ioc)
         , socket_(ioc)
@@ -175,7 +175,7 @@ public:
         req_.version(11);
         req_.method(http::verb::get);
         req_.target("/");
-        req_.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+        req_.set(http::field::user_agent, BEAST_VERSION_STRING);
     }
 
     // Start the asynchronous operation
@@ -190,9 +190,9 @@ public:
     }
 
     void
-    on_timer(boost::system::error_code ec)
+    on_timer(std::error_code ec)
     {
-        if(ec && ec != boost::asio::error::operation_aborted)
+        if(ec && ec != asio::error::operation_aborted)
         {
             // Should never happen
             report_.aggregate(
@@ -213,7 +213,7 @@ public:
 
         // Wait on the timer
         timer_.async_wait(
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &worker::on_timer,
@@ -245,7 +245,7 @@ public:
         resolver_.async_resolve(
             host,
             "http",
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &worker::on_resolve,
@@ -256,7 +256,7 @@ public:
 
     void
     on_resolve(
-        boost::system::error_code ec,
+        std::error_code ec,
         tcp::resolver::results_type results)
     {
         if(ec)
@@ -273,11 +273,11 @@ public:
         timer_.expires_after(chrono::seconds(timeout));
 
         // Make the connection on the IP address we get from a lookup
-        boost::asio::async_connect(
+        asio::async_connect(
             socket_,
             results.begin(),
             results.end(),
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &worker::on_connect,
@@ -286,7 +286,7 @@ public:
     }
 
     void
-    on_connect(boost::system::error_code ec)
+    on_connect(std::error_code ec)
     {
         if(ec)
         {
@@ -305,7 +305,7 @@ public:
         http::async_write(
             socket_,
             req_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &worker::on_write,
@@ -316,7 +316,7 @@ public:
 
     void
     on_write(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -339,7 +339,7 @@ public:
             socket_,
             buffer_,
             res_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &worker::on_read,
@@ -350,7 +350,7 @@ public:
 
     void
     on_read(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -418,10 +418,10 @@ int main(int argc, char* argv[])
     auto const threads = std::max<int>(1, std::atoi(argv[1]));
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{1};
+    asio::io_context ioc{1};
 
     // The work keeps io_context::run from returning
-    auto work = boost::asio::make_work_guard(ioc);
+    auto work = asio::make_work_guard(ioc);
 
     // The report holds the aggregated statistics
     crawl_report report{ioc};
@@ -439,7 +439,7 @@ int main(int argc, char* argv[])
             // the asio resolver simulates asynchronous operation using
             // a dedicated worker thread per io_context, and we want to
             // do a lot of name resolutions in parallel.
-            boost::asio::io_context ioc{1};
+            asio::io_context ioc{1};
             std::make_shared<worker>(report, ioc)->run();
             ioc.run();
         });

@@ -8,17 +8,16 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/file_body.hpp>
+#include <beast/http/file_body.hpp>
 
-#include <boost/beast/core/buffers_prefix.hpp>
-#include <boost/beast/core/file_stdio.hpp>
-#include <boost/beast/core/flat_buffer.hpp>
-#include <boost/beast/http/parser.hpp>
-#include <boost/beast/http/serializer.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_prefix.hpp>
+#include <beast/core/file_stdio.hpp>
+#include <beast/core/flat_buffer.hpp>
+#include <beast/http/parser.hpp>
+#include <beast/http/serializer.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <boost/filesystem.hpp>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -33,8 +32,8 @@ public:
         void
         operator()(error_code&, ConstBufferSequence const& buffers)
         {
-            buffer.commit(boost::asio::buffer_copy(
-                buffer.prepare(boost::asio::buffer_size(buffers)),
+            buffer.commit(asio::buffer_copy(
+                buffer.prepare(asio::buffer_size(buffers)),
                 buffers));
         }
     };
@@ -59,7 +58,7 @@ public:
                 temp.string<std::string>().c_str(), file_mode::write, ec);
             BEAST_EXPECTS(! ec, ec.message());
 
-            p.put(boost::asio::buffer(s.data(), s.size()), ec);
+            p.put(asio::buffer(s.data(), s.size()), ec);
             BEAST_EXPECTS(! ec, ec.message());
         }
         {
@@ -101,10 +100,10 @@ public:
     run() override
     {
         doTestFileBody<file_stdio>();
-    #if BOOST_BEAST_USE_WIN32_FILE
+    #if BEAST_USE_WIN32_FILE
         doTestFileBody<file_win32>();
     #endif
-    #if BOOST_BEAST_USE_POSIX_FILE
+    #if BEAST_USE_POSIX_FILE
         doTestFileBody<file_posix>();
     #endif
     }
@@ -114,4 +113,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,file_body);
 
 } // http
 } // beast
-} // boost

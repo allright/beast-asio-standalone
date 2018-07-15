@@ -8,14 +8,13 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/ostream.hpp>
+#include <beast/core/ostream.hpp>
 
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <ostream>
 
-namespace boost {
 namespace beast {
 
 class ostream_test : public beast::unit_test::suite
@@ -52,4 +51,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,ostream);
 
 } // beast
-} // boost

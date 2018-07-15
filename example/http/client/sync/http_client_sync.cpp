@@ -15,17 +15,17 @@
 
 //[example_http_client
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <beast/core.hpp>
+#include <beast/http.hpp>
+#include <beast/version.hpp>
+#include <asio/connect.hpp>
+#include <asio/ip/tcp.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
+using tcp = asio::ip::tcp;       // from <asio/ip/tcp.hpp>
+namespace http = beast::http;    // from <beast/http.hpp>
 
 // Performs an HTTP GET and prints the response
 int main(int argc, char** argv)
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         int version = argc == 5 && !std::strcmp("1.0", argv[4]) ? 10 : 11;
 
         // The io_context is required for all I/O
-        boost::asio::io_context ioc;
+        asio::io_context ioc;
 
         // These objects perform our I/O
         tcp::resolver resolver{ioc};
@@ -58,18 +58,18 @@ int main(int argc, char** argv)
         auto const results = resolver.resolve(host, port);
 
         // Make the connection on the IP address we get from a lookup
-        boost::asio::connect(socket, results.begin(), results.end());
+        asio::connect(socket, results.begin(), results.end());
 
         // Set up an HTTP GET request message
         http::request<http::string_body> req{http::verb::get, target, version};
         req.set(http::field::host, host);
-        req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+        req.set(http::field::user_agent, BEAST_VERSION_STRING);
 
         // Send the HTTP request to the remote host
         http::write(socket, req);
 
         // This buffer is used for reading and must be persisted
-        boost::beast::flat_buffer buffer;
+        beast::flat_buffer buffer;
 
         // Declare a container to hold the response
         http::response<http::dynamic_body> res;
@@ -81,14 +81,14 @@ int main(int argc, char** argv)
         std::cout << res << std::endl;
 
         // Gracefully close the socket
-        boost::system::error_code ec;
+        std::error_code ec;
         socket.shutdown(tcp::socket::shutdown_both, ec);
 
         // not_connected happens sometimes
         // so don't bother reporting it.
         //
-        if(ec && ec != boost::system::errc::not_connected)
-            throw boost::system::system_error{ec};
+        if(ec && ec != std::errc::not_connected)
+            throw std::system_error{ec};
 
         // If we get here then the connection is closed gracefully
     }

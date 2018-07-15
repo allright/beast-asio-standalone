@@ -7,30 +7,29 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_WEBSOCKET_HPP
-#define BOOST_BEAST_TEST_WEBSOCKET_HPP
+#ifndef BEAST_TEST_WEBSOCKET_HPP
+#define BEAST_TEST_WEBSOCKET_HPP
 
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/websocket/stream.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/asio/executor_work_guard.hpp>
-#include <boost/asio/io_context.hpp>
-#include <boost/asio/spawn.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/websocket/stream.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <asio/executor_work_guard.hpp>
+#include <asio/io_context.hpp>
+#include <asio/spawn.hpp>
 #include <cstdlib>
 #include <memory>
 #include <ostream>
 #include <thread>
 
-namespace boost {
 namespace beast {
 namespace test {
 
 class ws_echo_server
 {
     std::ostream& log_;
-    boost::asio::io_context ioc_;
-    boost::asio::executor_work_guard<
-        boost::asio::io_context::executor_type> work_;
+    asio::io_context ioc_;
+    asio::executor_work_guard<
+        asio::io_context::executor_type> work_;
     multi_buffer buffer_;
     test::stream ts_;
     std::thread t_;
@@ -102,7 +101,7 @@ public:
     void
     async_close()
     {
-        boost::asio::post(ioc_,
+        asio::post(ioc_,
         [&]
         {
             if(ws_.is_open())
@@ -141,7 +140,7 @@ private:
 #if 0
             if( se.code() != error::closed &&
                 se.code() != error::failed &&
-                se.code() != boost::asio::error::eof)
+                se.code() != asio::error::eof)
                 log_ << "ws_echo_server: " << se.code().message() << std::endl;
 #endif
         }
@@ -233,7 +232,7 @@ private:
 #if 0
         if( ec != error::closed &&
             ec != error::failed &&
-            ec != boost::asio::error::eof)
+            ec != asio::error::eof)
             log_ <<
                 "echo_server_async: " <<
                 ec.message() <<
@@ -244,6 +243,5 @@ private:
 
 } // test
 } // beast
-} // boost
 
 #endif

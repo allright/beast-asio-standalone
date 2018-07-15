@@ -7,15 +7,14 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_RESULTS_HPP
-#define BOOST_BEAST_UNIT_TEST_RESULTS_HPP
+#ifndef BEAST_UNIT_TEST_RESULTS_HPP
+#define BEAST_UNIT_TEST_RESULTS_HPP
 
-#include <boost/beast/unit_test/detail/const_container.hpp>
+#include <beast/unit_test/detail/const_container.hpp>
 
 #include <string>
 #include <vector>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -241,6 +240,5 @@ public:
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

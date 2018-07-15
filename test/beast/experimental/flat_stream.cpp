@@ -8,15 +8,14 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/experimental/core/flat_stream.hpp>
+#include <beast/experimental/core/flat_stream.hpp>
 
-#include <boost/beast/test/websocket.hpp>
-#include <boost/beast/test/yield_to.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/test/websocket.hpp>
+#include <beast/test/yield_to.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <initializer_list>
 #include <vector>
 
-namespace boost {
 namespace beast {
 
 class flat_stream_test
@@ -34,12 +33,12 @@ public:
                 unsigned long count,
                 bool copy)
             {
-                std::vector<boost::asio::const_buffer> v;
+                std::vector<asio::const_buffer> v;
                 v.reserve(v0.size());
                 for(auto const n : v0)
                     v.emplace_back("", n);
                 auto const result =
-                    boost::beast::detail::flat_stream_base::coalesce(v, limit);
+                    beast::detail::flat_stream_base::coalesce(v, limit);
                 BEAST_EXPECT(result.first == count);
                 BEAST_EXPECT(result.second == copy);
                 return result;
@@ -69,7 +68,7 @@ public:
         {
             error_code ec;
             test::ws_echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             websocket::stream<flat_stream<test::stream>> ws{ioc};
             ws.next_layer().next_layer().connect(es.stream());
             ws.handshake("localhost", "/", ec);
@@ -79,7 +78,7 @@ public:
         }
         {
             test::ws_echo_server es{log};
-            boost::asio::io_context ioc;
+            asio::io_context ioc;
             websocket::stream<flat_stream<test::stream>> ws{ioc};
             ws.next_layer().next_layer().connect(es.stream());
             ws.async_handshake("localhost", "/",
@@ -106,4 +105,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,flat_stream);
 
 } // beast
-} // boost

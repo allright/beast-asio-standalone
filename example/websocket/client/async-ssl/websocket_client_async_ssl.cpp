@@ -15,27 +15,27 @@
 
 #include "example/common/root_certificates.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ssl/stream.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <beast/websocket/ssl.hpp>
+#include <asio/connect.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/ssl/stream.hpp>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace ssl = asio::ssl;               // from <asio/ssl.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 //------------------------------------------------------------------------------
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
@@ -45,14 +45,14 @@ class session : public std::enable_shared_from_this<session>
 {
     tcp::resolver resolver_;
     websocket::stream<ssl::stream<tcp::socket>> ws_;
-    boost::beast::multi_buffer buffer_;
+    beast::multi_buffer buffer_;
     std::string host_;
     std::string text_;
 
 public:
     // Resolver and socket require an io_context
     explicit
-    session(boost::asio::io_context& ioc, ssl::context& ctx)
+    session(asio::io_context& ioc, ssl::context& ctx)
         : resolver_(ioc)
         , ws_(ioc, ctx)
     {
@@ -82,14 +82,14 @@ public:
 
     void
     on_resolve(
-        boost::system::error_code ec,
+        std::error_code ec,
         tcp::resolver::results_type results)
     {
         if(ec)
             return fail(ec, "resolve");
 
         // Make the connection on the IP address we get from a lookup
-        boost::asio::async_connect(
+        asio::async_connect(
             ws_.next_layer().next_layer(),
             results.begin(),
             results.end(),
@@ -100,7 +100,7 @@ public:
     }
 
     void
-    on_connect(boost::system::error_code ec)
+    on_connect(std::error_code ec)
     {
         if(ec)
             return fail(ec, "connect");
@@ -115,7 +115,7 @@ public:
     }
 
     void
-    on_ssl_handshake(boost::system::error_code ec)
+    on_ssl_handshake(std::error_code ec)
     {
         if(ec)
             return fail(ec, "ssl_handshake");
@@ -129,14 +129,14 @@ public:
     }
 
     void
-    on_handshake(boost::system::error_code ec)
+    on_handshake(std::error_code ec)
     {
         if(ec)
             return fail(ec, "handshake");
         
         // Send the message
         ws_.async_write(
-            boost::asio::buffer(text_),
+            asio::buffer(text_),
             std::bind(
                 &session::on_write,
                 shared_from_this(),
@@ -146,7 +146,7 @@ public:
 
     void
     on_write(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -166,7 +166,7 @@ public:
 
     void
     on_read(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
@@ -183,7 +183,7 @@ public:
     }
 
     void
-    on_close(boost::system::error_code ec)
+    on_close(std::error_code ec)
     {
         if(ec)
             return fail(ec, "close");
@@ -191,7 +191,7 @@ public:
         // If we get here then the connection is closed gracefully
 
         // The buffers() function helps print a ConstBufferSequence
-        std::cout << boost::beast::buffers(buffer_.data()) << std::endl;
+        std::cout << beast::buffers(buffer_.data()) << std::endl;
     }
 };
 
@@ -213,7 +213,7 @@ int main(int argc, char** argv)
     auto const text = argv[3];
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc;
+    asio::io_context ioc;
 
     // The SSL context is required, and holds certificates
     ssl::context ctx{ssl::context::sslv23_client};

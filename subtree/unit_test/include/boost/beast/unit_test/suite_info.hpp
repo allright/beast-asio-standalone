@@ -7,15 +7,14 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_SUITE_INFO_HPP
-#define BOOST_BEAST_UNIT_TEST_SUITE_INFO_HPP
+#ifndef BEAST_UNIT_TEST_SUITE_INFO_HPP
+#define BEAST_UNIT_TEST_SUITE_INFO_HPP
 
 #include <cstring>
 #include <functional>
 #include <string>
 #include <utility>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -121,6 +120,5 @@ make_suite_info(
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

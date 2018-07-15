@@ -14,7 +14,7 @@ GroupSources(include/boost/beast beast)
 GroupSources(test/example/common "/")
 
 add_executable (tests-example-common
-    ${BOOST_BEAST_FILES}
+    ${BEAST_FILES}
     ${COMMON_FILES}
     ${EXTRAS_FILES}
     ${TEST_MAIN}

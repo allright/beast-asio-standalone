@@ -7,16 +7,15 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_RUNNER_H_INCLUDED
-#define BOOST_BEAST_UNIT_TEST_RUNNER_H_INCLUDED
+#ifndef BEAST_UNIT_TEST_RUNNER_H_INCLUDED
+#define BEAST_UNIT_TEST_RUNNER_H_INCLUDED
 
-#include <boost/beast/unit_test/suite_info.hpp>
+#include <beast/unit_test/suite_info.hpp>
 #include <boost/assert.hpp>
 #include <mutex>
 #include <ostream>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -287,6 +286,5 @@ runner::log(std::string const& s)
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

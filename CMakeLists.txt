@@ -75,12 +75,12 @@ get_filename_component (BOOST_ROOT ../../ ABSOLUTE)
 add_definitions (-DBOOST_ALL_STATIC_LINK=1)
 
 # Some of the tests use deprecated APIs
-#add_definitions (-DBOOST_ASIO_NO_DEPRECATED=1)
+#add_definitions (-DASIO_NO_DEPRECATED=1)
 
-add_definitions (-DBOOST_ASIO_DISABLE_BOOST_ARRAY=1)
-add_definitions (-DBOOST_ASIO_DISABLE_BOOST_BIND=1)
-add_definitions (-DBOOST_ASIO_DISABLE_BOOST_DATE_TIME=1)
-add_definitions (-DBOOST_ASIO_DISABLE_BOOST_REGEX=1)
+add_definitions (-DASIO_DISABLE_BOOST_ARRAY=1)
+add_definitions (-DASIO_DISABLE_BOOST_BIND=1)
+add_definitions (-DASIO_DISABLE_BOOST_DATE_TIME=1)
+add_definitions (-DASIO_DISABLE_BOOST_REGEX=1)
 add_definitions (-DBOOST_COROUTINES_NO_DEPRECATION_WARNING=1)
 
 include_directories (${BOOST_ROOT})
@@ -108,10 +108,10 @@ endif()
 find_package(OpenSSL)
 
 if (OPENSSL_FOUND)
-    add_definitions (-DBOOST_BEAST_USE_OPENSSL=1)
+    add_definitions (-DBEAST_USE_OPENSSL=1)
 
 else()
-    add_definitions (-DBOOST_BEAST_USE_OPENSSL=0)
+    add_definitions (-DBEAST_USE_OPENSSL=0)
     message("OpenSSL not found.")
 endif()
 
@@ -152,7 +152,7 @@ elseif ("${VARIANT}" STREQUAL "ubasan")
     else()
         set (CMAKE_BUILD_TYPE RELWITHDEBINFO)
         set (CMAKE_CXX_FLAGS
-          "${CMAKE_CXX_FLAGS} -DBOOST_BEAST_NO_SLOW_TESTS=1 -msse4.2 -funsigned-char -fno-omit-frame-pointer -fsanitize=address,undefined -fno-sanitize-recover=address,undefined -fsanitize-blacklist=${PROJECT_SOURCE_DIR}/tools/blacklist.supp")
+          "${CMAKE_CXX_FLAGS} -DBEAST_NO_SLOW_TESTS=1 -msse4.2 -funsigned-char -fno-omit-frame-pointer -fsanitize=address,undefined -fno-sanitize-recover=address,undefined -fsanitize-blacklist=${PROJECT_SOURCE_DIR}/tools/blacklist.supp")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address,undefined -fno-sanitize-recover=address,undefined")
     endif()
 
@@ -175,7 +175,7 @@ if (OPENSSL_FOUND)
     include_directories (${OPENSSL_INCLUDE_DIR})
 endif()
 
-file (GLOB_RECURSE BOOST_BEAST_FILES
+file (GLOB_RECURSE BEAST_FILES
     ${PROJECT_SOURCE_DIR}/include/boost/beast/*.hpp
     ${PROJECT_SOURCE_DIR}/include/boost/beast/*.ipp
 )

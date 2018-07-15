@@ -8,20 +8,19 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/core/buffered_read_stream.hpp>
+#include <beast/core/buffered_read_stream.hpp>
 
-#include <boost/beast/core/multi_buffer.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/test/yield_to.hpp>
-#include <boost/beast/unit_test/suite.hpp>
-#include <boost/asio/buffer.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/read.hpp>
-#include <boost/asio/spawn.hpp>
-#include <boost/asio/strand.hpp>
+#include <beast/core/multi_buffer.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/test/yield_to.hpp>
+#include <beast/unit_test/suite.hpp>
+#include <asio/buffer.hpp>
+#include <asio/io_context.hpp>
+#include <asio/read.hpp>
+#include <asio/spawn.hpp>
+#include <asio/strand.hpp>
 #include <boost/optional.hpp>
 
-namespace boost {
 namespace beast {
 
 class buffered_read_stream_test
@@ -33,7 +32,7 @@ class buffered_read_stream_test
 public:
     void testSpecialMembers()
     {
-        boost::asio::io_context ioc;
+        asio::io_context ioc;
         {
             buffered_read_stream<test::stream, multi_buffer> srs(ioc);
             buffered_read_stream<test::stream, multi_buffer> srs2(std::move(srs));
@@ -55,7 +54,7 @@ public:
         std::size_t n_ = 0;
         std::size_t cap_;
         unit_test::suite& suite_;
-        boost::asio::io_context& ioc_;
+        asio::io_context& ioc_;
         boost::optional<test::stream> ts_;
         boost::optional<test::fail_count> fc_;
         boost::optional<buffered_read_stream<
@@ -63,7 +62,7 @@ public:
 
         loop(
             unit_test::suite& suite,
-            boost::asio::io_context& ioc,
+            asio::io_context& ioc,
             std::size_t cap)
             : cap_(cap)
             , suite_(suite)
@@ -80,7 +79,7 @@ public:
         void
         on_read(error_code ec, std::size_t)
         {
-            using boost::asio::buffer;
+            using asio::buffer;
             if(! ec)
             {
                 suite_.expect(s_ ==
@@ -97,15 +96,15 @@ public:
         void
         do_read()
         {
-            using boost::asio::buffer;
-            using boost::asio::buffer_copy;
+            using asio::buffer;
+            using asio::buffer_copy;
             s_.resize(13);
             fc_.emplace(n_);
             ts_.emplace(ioc_, *fc_, ", world!");
             brs_.emplace(*ts_);
             brs_->buffer().commit(buffer_copy(
                 brs_->buffer().prepare(5), buffer("Hello", 5)));
-            boost::asio::async_read(*brs_,
+            asio::async_read(*brs_,
                 buffer(&s_[0], s_.size()),
                     std::bind(
                         &loop::on_read,
@@ -124,8 +123,8 @@ public:
 
     void testRead(yield_context do_yield)
     {
-        using boost::asio::buffer;
-        using boost::asio::buffer_copy;
+        using asio::buffer;
+        using asio::buffer_copy;
         static std::size_t constexpr limit = 100;
         std::size_t n;
         std::string s;
@@ -140,7 +139,7 @@ public:
             srs.buffer().commit(buffer_copy(
                 srs.buffer().prepare(5), buffer("Hello", 5)));
             error_code ec = test::error::test_failure;
-            boost::asio::read(srs, buffer(&s[0], s.size()), ec);
+            asio::read(srs, buffer(&s[0], s.size()), ec);
             if(! ec)
             {
                 BEAST_EXPECT(s == "Hello, world!");
@@ -159,7 +158,7 @@ public:
             srs.buffer().commit(buffer_copy(
                 srs.buffer().prepare(5), buffer("Hello", 5)));
             error_code ec = test::error::test_failure;
-            boost::asio::read(srs, buffer(&s[0], s.size()), ec);
+            asio::read(srs, buffer(&s[0], s.size()), ec);
             if(! ec)
             {
                 BEAST_EXPECT(s == "Hello, world!");
@@ -177,7 +176,7 @@ public:
             srs.buffer().commit(buffer_copy(
                 srs.buffer().prepare(5), buffer("Hello", 5)));
             error_code ec = test::error::test_failure;
-            boost::asio::async_read(
+            asio::async_read(
                 srs, buffer(&s[0], s.size()), do_yield[ec]);
             if(! ec)
             {
@@ -197,7 +196,7 @@ public:
             srs.buffer().commit(buffer_copy(
                 srs.buffer().prepare(5), buffer("Hello", 5)));
             error_code ec = test::error::test_failure;
-            boost::asio::async_read(
+            asio::async_read(
                 srs, buffer(&s[0], s.size()), do_yield[ec]);
             if(! ec)
             {
@@ -223,12 +222,12 @@ public:
         // make sure things compile, also can set a
         // breakpoint in asio_handler_invoke to make sure
         // it is instantiated.
-        boost::asio::io_context ioc;
-        boost::asio::io_service::strand s{ioc};
+        asio::io_context ioc;
+        asio::io_context::strand s{ioc};
         test::stream ts{ioc};
         buffered_read_stream<
             test::stream&, multi_buffer> brs(ts);
-        brs.async_read_some(boost::asio::mutable_buffer{},
+        brs.async_read_some(asio::mutable_buffer{},
             s.wrap(copyable_handler{}));
     }
 
@@ -247,4 +246,3 @@ public:
 BEAST_DEFINE_TESTSUITE(beast,core,buffered_read_stream);
 
 } // beast
-} // boost

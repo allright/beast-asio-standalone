@@ -164,11 +164,11 @@
   <xsl:param name="name"/>
   <xsl:variable name="type">
     <xsl:choose>
-      <xsl:when test="contains($name, 'BOOST_ASIO_DECL ')">
-        <xsl:value-of select="substring-after($name, 'BOOST_ASIO_DECL ')"/>
+      <xsl:when test="contains($name, 'ASIO_DECL ')">
+        <xsl:value-of select="substring-after($name, 'ASIO_DECL ')"/>
       </xsl:when>
-      <xsl:when test="contains($name, 'BOOST_ASIO_DECL')">
-        <xsl:value-of select="substring-after($name, 'BOOST_ASIO_DECL')"/>
+      <xsl:when test="contains($name, 'ASIO_DECL')">
+        <xsl:value-of select="substring-after($name, 'ASIO_DECL')"/>
       </xsl:when>
       <xsl:when test="$name = 'virtual'"></xsl:when>
       <xsl:otherwise>
@@ -197,16 +197,16 @@
 <xsl:template name="make-id">
   <xsl:param name="name"/>
   <xsl:choose>
-    <xsl:when test="contains($name, 'boost::system::')">
+    <xsl:when test="contains($name, 'std::')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
-         select="substring-after($name, 'boost::system::')"/>
+         select="substring-after($name, 'std::')"/>
       </xsl:call-template>
     </xsl:when>
-    <xsl:when test="contains($name, 'boost::asio::error::')">
+    <xsl:when test="contains($name, 'asio::error::')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
-         select="concat(substring-before($name, 'boost::asio::error::'), substring-after($name, 'boost::asio::error::'))"/>
+         select="concat(substring-before($name, 'asio::error::'), substring-after($name, 'asio::error::'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '::')">
@@ -1362,7 +1362,7 @@
     </xsl:apply-templates>
   </xsl:otherwise>
 </xsl:choose>
-<xsl:if test="$class-name = 'io_service::service'">
+<xsl:if test="$class-name = 'io_context::service'">
   <xsl:apply-templates select="sectiondef[@kind='private-func']/memberdef[not(type = 'friend class') and not(contains(name, '_helper'))]" mode="class-detail">
     <xsl:sort select="name"/>
     <xsl:with-param name="class-name" select="$class-name"/>

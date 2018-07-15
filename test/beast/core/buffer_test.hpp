@@ -7,20 +7,19 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_BUFFER_TEST_HPP
-#define BOOST_BEAST_TEST_BUFFER_TEST_HPP
+#ifndef BEAST_TEST_BUFFER_TEST_HPP
+#define BEAST_TEST_BUFFER_TEST_HPP
 
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/core/read_size.hpp>
-#include <boost/beast/core/type_traits.hpp>
-#include <boost/beast/core/detail/type_traits.hpp>
-#include <boost/asio/buffer.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/string.hpp>
+#include <beast/core/read_size.hpp>
+#include <beast/core/type_traits.hpp>
+#include <beast/core/detail/type_traits.hpp>
+#include <asio/buffer.hpp>
 #include <algorithm>
 #include <string>
 #include <type_traits>
 
-namespace boost {
 namespace beast {
 namespace test {
 
@@ -28,14 +27,14 @@ template<class DynamicBuffer>
 void
 write_buffer(DynamicBuffer& b, string_view s)
 {
-    b.commit(boost::asio::buffer_copy(
-        b.prepare(s.size()), boost::asio::buffer(
+    b.commit(asio::buffer_copy(
+        b.prepare(s.size()), asio::buffer(
             s.data(), s.size())));
 }
 
 template<class ConstBufferSequence>
 typename std::enable_if<
-    boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value,
+    asio::is_const_buffer_sequence<ConstBufferSequence>::value,
         std::size_t>::type
 buffer_count(ConstBufferSequence const& buffers)
 {
@@ -44,7 +43,7 @@ buffer_count(ConstBufferSequence const& buffers)
 
 template<class ConstBufferSequence>
 typename std::enable_if<
-    boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value,
+    asio::is_const_buffer_sequence<ConstBufferSequence>::value,
         std::size_t>::type
 size_pre(ConstBufferSequence const& buffers)
 {
@@ -55,7 +54,7 @@ size_pre(ConstBufferSequence const& buffers)
         typename ConstBufferSequence::const_iterator it1(it0);
         typename ConstBufferSequence::const_iterator it2;
         it2 = it1;
-        n += boost::asio::buffer_size(*it2);
+        n += asio::buffer_size(*it2);
         it = std::move(it2);
     }
     return n;
@@ -63,31 +62,31 @@ size_pre(ConstBufferSequence const& buffers)
 
 template<class ConstBufferSequence>
 typename std::enable_if<
-    boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value,
+    asio::is_const_buffer_sequence<ConstBufferSequence>::value,
         std::size_t>::type
 size_post(ConstBufferSequence const& buffers)
 {
     std::size_t n = 0;
     for(auto it = buffers.begin(); it != buffers.end(); it++)
-        n += boost::asio::buffer_size(*it);
+        n += asio::buffer_size(*it);
     return n;
 }
 
 template<class ConstBufferSequence>
 typename std::enable_if<
-    boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value,
+    asio::is_const_buffer_sequence<ConstBufferSequence>::value,
         std::size_t>::type
 size_rev_pre(ConstBufferSequence const& buffers)
 {
     std::size_t n = 0;
     for(auto it = buffers.end(); it != buffers.begin();)
-        n += boost::asio::buffer_size(*--it);
+        n += asio::buffer_size(*--it);
     return n;
 }
 
 template<class ConstBufferSequence>
 typename std::enable_if<
-    boost::asio::is_const_buffer_sequence<ConstBufferSequence>::value,
+    asio::is_const_buffer_sequence<ConstBufferSequence>::value,
         std::size_t>::type
 size_rev_post(ConstBufferSequence const& buffers)
 {
@@ -95,13 +94,12 @@ size_rev_post(ConstBufferSequence const& buffers)
     for(auto it = buffers.end(); it != buffers.begin();)
     {
         it--;
-        n += boost::asio::buffer_size(*it);
+        n += asio::buffer_size(*it);
     }
     return n;
 }
 
 } // test
 } // beast
-} // boost
 
 #endif

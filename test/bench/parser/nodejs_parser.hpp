@@ -7,16 +7,16 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_HTTP_NODEJS_PARSER_HPP
-#define BOOST_BEAST_HTTP_NODEJS_PARSER_HPP
+#ifndef BEAST_HTTP_NODEJS_PARSER_HPP
+#define BEAST_HTTP_NODEJS_PARSER_HPP
 
 #include "nodejs-parser/http_parser.h"
 
-#include <boost/beast/http/message.hpp>
-#include <boost/beast/http/rfc7230.hpp>
-#include <boost/beast/core/error.hpp>
-#include <boost/beast/core/type_traits.hpp>
-#include <boost/asio/buffer.hpp>
+#include <beast/http/message.hpp>
+#include <beast/http/rfc7230.hpp>
+#include <beast/core/error.hpp>
+#include <beast/core/type_traits.hpp>
+#include <asio/buffer.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/throw_exception.hpp>
 #include <cstdint>
@@ -24,14 +24,13 @@
 #include <type_traits>
 #include <utility>
 
-namespace boost {
 namespace beast {
 namespace http {
 
 namespace detail {
 
 class nodejs_message_category
-    : public boost::system::error_category
+    : public std::error_category
 {
 public:
     const char*
@@ -47,15 +46,15 @@ public:
             static_cast<http_errno>(ev));
     }
 
-    boost::system::error_condition
+    std::error_condition
     default_error_condition(int ev) const noexcept override
     {
-        return boost::system::error_condition{ev, *this};
+        return std::error_condition{ev, *this};
     }
 
     bool
     equivalent(int ev,
-        boost::system::error_condition const& condition
+        std::error_condition const& condition
             ) const noexcept override
     {
         return condition.value() == ev &&
@@ -63,7 +62,7 @@ public:
     }
 
     bool
-    equivalent(boost::system::error_code const& error,
+    equivalent(std::error_code const& error,
         int ev) const noexcept override
     {
         return error.value() == ev &&
@@ -72,11 +71,11 @@ public:
 };
 
 template<class = void>
-boost::system::error_code
+std::error_code
 make_nodejs_error(int http_errno)
 {
     static nodejs_message_category const mc{};
-    return boost::system::error_code{http_errno, mc};
+    return std::error_code{http_errno, mc};
 }
 
 inline
@@ -144,7 +143,7 @@ template<class Derived>
 class nodejs_basic_parser
 {
     http_parser state_;
-    boost::system::error_code* ec_;
+    std::error_code* ec_;
     bool complete_ = false;
     std::string url_;
     std::string status_;
@@ -152,7 +151,7 @@ class nodejs_basic_parser
     std::string value_;
 
 public:
-    using error_code = boost::system::error_code;
+    using error_code = std::error_code;
 
     nodejs_basic_parser(nodejs_basic_parser&& other);
 
@@ -264,7 +263,7 @@ std::size_t
 nodejs_basic_parser<Derived>::write(
     ConstBufferSequence const& buffers, error_code& ec)
 {
-    static_assert(boost::asio::is_const_buffer_sequence<
+    static_assert(asio::is_const_buffer_sequence<
         ConstBufferSequence>::value,
             "ConstBufferSequence requirements not met");
     std::size_t bytes_used = 0;
@@ -635,6 +634,5 @@ private:
 
 } // http
 } // beast
-} // boost
 
 #endif

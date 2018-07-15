@@ -7,12 +7,12 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/unit_test/amount.hpp>
-#include <boost/beast/unit_test/dstream.hpp>
-#include <boost/beast/unit_test/global_suites.hpp>
-#include <boost/beast/unit_test/match.hpp>
-#include <boost/beast/unit_test/reporter.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/unit_test/amount.hpp>
+#include <beast/unit_test/dstream.hpp>
+#include <beast/unit_test/global_suites.hpp>
+#include <beast/unit_test/match.hpp>
+#include <beast/unit_test/reporter.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <boost/config.hpp>
 #include <cstdlib>
 #include <iostream>
@@ -33,7 +33,7 @@
 int main(int ac, char const* av[])
 {
     using namespace std;
-    using namespace boost::beast::unit_test;
+    using namespace beast::unit_test;
 
     dstream log(std::cerr);
     std::unitbuf(log);

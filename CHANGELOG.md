@@ -77,7 +77,7 @@ Version 169:
 * Use buffers_to_string in tests
 * Use boost::void_t
 * Refactor HTTP write_op implementation
-* Use fully qualified namespace in BOOST_BEAST_HANDLER_INIT
+* Use fully qualified namespace in BEAST_HANDLER_INIT
 * New flat_stream example class
 * Use flat_stream in ssl_stream example code
 
@@ -516,7 +516,7 @@ Actions Required:
 
 Version 127:
 
-* Add BOOST_BEAST_NO_POSIX_FADVISE
+* Add BEAST_NO_POSIX_FADVISE
 * Version command line option for HTTP client examples
 * More Jamfile compiler requirements for tests
 
@@ -546,13 +546,13 @@ API Changes:
 
 Actions Required:
 
-* Use BOOST_ASIO_HANDLER_TYPE instead of handler_type
-* Use BOOST_ASIO_INITFN_RESULT_TYPE instead of async_result
-* Use boost::asio::async_completion
-* Use boost::asio::is_dynamic_buffer
-* Use boost::asio::is_const_buffer_sequence
-* Use boost::asio::is_mutable_buffer_sequence
-* boost::asio::associated_allocator_t replaces handler_alloc
+* Use ASIO_HANDLER_TYPE instead of handler_type
+* Use ASIO_INITFN_RESULT_TYPE instead of async_result
+* Use asio::async_completion
+* Use asio::is_dynamic_buffer
+* Use asio::is_const_buffer_sequence
+* Use asio::is_mutable_buffer_sequence
+* asio::associated_allocator_t replaces handler_alloc
 
 --------------------------------------------------------------------------------
 
@@ -967,7 +967,7 @@ Version 91:
 * Tidy up MSVC CMakeLists.txt
 * Optimize buffered_read_stream
 * constexpr in derived buffers
-* Set BOOST_ASIO_NO_DEPRECATED
+* Set ASIO_NO_DEPRECATED
 * Use Asio array optimization in static_buffer_base
 * Rename wstest source file
 * Use fopen_s on Windows
@@ -1849,7 +1849,7 @@ API Changes:
 
 Version 45
 
-* Workaround for boost::asio::basic_streambuf type check
+* Workaround for asio::basic_streambuf type check
 * Fix message doc image
 * Better test::enable_yield_to
 * Fix header::reason
@@ -2045,7 +2045,7 @@ WebSocket
 
 1.0.0-b32
 
-* Add io_service completion invariants test
+* Add io_context completion invariants test
 * Update CMake scripts for finding packages
 
 API Changes:

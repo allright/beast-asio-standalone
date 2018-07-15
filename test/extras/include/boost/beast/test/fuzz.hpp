@@ -7,14 +7,13 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_TEST_FUZZ_HPP
-#define BOOST_BEAST_TEST_FUZZ_HPP
+#ifndef BEAST_TEST_FUZZ_HPP
+#define BEAST_TEST_FUZZ_HPP
 
-#include <boost/beast/core/static_string.hpp>
-#include <boost/beast/core/string.hpp>
+#include <beast/core/static_string.hpp>
+#include <beast/core/string.hpp>
 #include <random>
 
-namespace boost {
 namespace beast {
 namespace test {
 
@@ -100,6 +99,5 @@ fuzz(
 
 } // test
 } // beast
-} // boost
 
 #endif

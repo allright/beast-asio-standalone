@@ -7,18 +7,17 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#include <boost/beast/core/string.hpp>
-#include <boost/beast/zlib/deflate_stream.hpp>
-#include <boost/beast/test/throughput.hpp>
-#include <boost/beast/unit_test/dstream.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/string.hpp>
+#include <beast/zlib/deflate_stream.hpp>
+#include <beast/test/throughput.hpp>
+#include <beast/unit_test/dstream.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <iomanip>
 #include <random>
 #include <string>
 
 #include "zlib-1.2.11/zlib.h"
 
-namespace boost {
 namespace beast {
 namespace zlib {
 
@@ -197,4 +196,3 @@ BEAST_DEFINE_TESTSUITE(beast,zlib,deflate_stream);
 
 } // zlib
 } // beast
-} // boost

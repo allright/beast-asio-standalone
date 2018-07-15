@@ -7,11 +7,11 @@
 // Official repository: https://github.com/boostorg/beast
 //
 
-#ifndef BOOST_BEAST_UNIT_TEST_REPORTER_HPP
-#define BOOST_BEAST_UNIT_TEST_REPORTER_HPP
+#ifndef BEAST_UNIT_TEST_REPORTER_HPP
+#define BEAST_UNIT_TEST_REPORTER_HPP
 
-#include <boost/beast/unit_test/amount.hpp>
-#include <boost/beast/unit_test/recorder.hpp>
+#include <beast/unit_test/amount.hpp>
+#include <beast/unit_test/recorder.hpp>
 #include <algorithm>
 #include <chrono>
 #include <functional>
@@ -21,7 +21,6 @@
 #include <string>
 #include <utility>
 
-namespace boost {
 namespace beast {
 namespace unit_test {
 
@@ -287,6 +286,5 @@ using reporter = detail::reporter<>;
 
 } // unit_test
 } // beast
-} // boost
 
 #endif

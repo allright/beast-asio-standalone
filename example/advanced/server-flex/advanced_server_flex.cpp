@@ -16,17 +16,17 @@
 #include "example/common/detect_ssl.hpp"
 #include "example/common/server_certificate.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/beast/experimental/core/ssl_stream.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/signal_set.hpp>
-#include <boost/asio/ssl/stream.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/steady_timer.hpp>
+#include <beast/core.hpp>
+#include <beast/http.hpp>
+#include <beast/websocket.hpp>
+#include <beast/version.hpp>
+#include <beast/experimental/core/ssl_stream.hpp>
+#include <asio/bind_executor.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/signal_set.hpp>
+#include <asio/ssl/stream.hpp>
+#include <asio/strand.hpp>
+#include <asio/steady_timer.hpp>
 #include <boost/make_unique.hpp>
 #include <boost/config.hpp>
 #include <algorithm>
@@ -38,21 +38,21 @@
 #include <thread>
 #include <vector>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
-namespace http = boost::beast::http;            // from <boost/beast/http.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace ssl = asio::ssl;               // from <asio/ssl.hpp>
+namespace http = beast::http;            // from <beast/http.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 // Return a reasonable mime type based on the extension of a file.
-boost::beast::string_view
-mime_type(boost::beast::string_view path)
+beast::string_view
+mime_type(beast::string_view path)
 {
-    using boost::beast::iequals;
+    using beast::iequals;
     auto const ext = [&path]
     {
         auto const pos = path.rfind(".");
-        if(pos == boost::beast::string_view::npos)
-            return boost::beast::string_view{};
+        if(pos == beast::string_view::npos)
+            return beast::string_view{};
         return path.substr(pos);
     }();
     if(iequals(ext, ".htm"))  return "text/html";
@@ -83,8 +83,8 @@ mime_type(boost::beast::string_view path)
 // The returned path is normalized for the platform.
 std::string
 path_cat(
-    boost::beast::string_view base,
-    boost::beast::string_view path)
+    beast::string_view base,
+    beast::string_view path)
 {
     if(base.empty())
         return path.to_string();
@@ -115,16 +115,16 @@ template<
     class Send>
 void
 handle_request(
-    boost::beast::string_view doc_root,
+    beast::string_view doc_root,
     http::request<Body, http::basic_fields<Allocator>>&& req,
     Send&& send)
 {
     // Returns a bad request response
     auto const bad_request =
-    [&req](boost::beast::string_view why)
+    [&req](beast::string_view why)
     {
         http::response<http::string_body> res{http::status::bad_request, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
         res.body() = why.to_string();
@@ -134,10 +134,10 @@ handle_request(
 
     // Returns a not found response
     auto const not_found =
-    [&req](boost::beast::string_view target)
+    [&req](beast::string_view target)
     {
         http::response<http::string_body> res{http::status::not_found, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
         res.body() = "The resource '" + target.to_string() + "' was not found.";
@@ -147,10 +147,10 @@ handle_request(
 
     // Returns a server error response
     auto const server_error =
-    [&req](boost::beast::string_view what)
+    [&req](beast::string_view what)
     {
         http::response<http::string_body> res{http::status::internal_server_error, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");
         res.keep_alive(req.keep_alive());
         res.body() = "An error occurred: '" + what.to_string() + "'";
@@ -166,7 +166,7 @@ handle_request(
     // Request path must be absolute and not contain "..".
     if( req.target().empty() ||
         req.target()[0] != '/' ||
-        req.target().find("..") != boost::beast::string_view::npos)
+        req.target().find("..") != beast::string_view::npos)
         return send(bad_request("Illegal request-target"));
 
     // Build the path to the requested file
@@ -175,12 +175,12 @@ handle_request(
         path.append("index.html");
 
     // Attempt to open the file
-    boost::beast::error_code ec;
+    beast::error_code ec;
     http::file_body::value_type body;
-    body.open(path.c_str(), boost::beast::file_mode::scan, ec);
+    body.open(path.c_str(), beast::file_mode::scan, ec);
 
     // Handle the case where the file doesn't exist
-    if(ec == boost::system::errc::no_such_file_or_directory)
+    if(ec == std::errc::no_such_file_or_directory)
         return send(not_found(req.target()));
 
     // Handle an unknown error
@@ -194,7 +194,7 @@ handle_request(
     if(req.method() == http::verb::head)
     {
         http::response<http::empty_body> res{http::status::ok, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::server, BEAST_VERSION_STRING);
         res.set(http::field::content_type, mime_type(path));
         res.content_length(size);
         res.keep_alive(req.keep_alive());
@@ -206,7 +206,7 @@ handle_request(
         std::piecewise_construct,
         std::make_tuple(std::move(body)),
         std::make_tuple(http::status::ok, req.version())};
-    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+    res.set(http::field::server, BEAST_VERSION_STRING);
     res.set(http::field::content_type, mime_type(path));
     res.content_length(size);
     res.keep_alive(req.keep_alive());
@@ -217,7 +217,7 @@ handle_request(
 
 // Report a failure
 void
-fail(boost::system::error_code ec, char const* what)
+fail(std::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
@@ -238,18 +238,18 @@ class websocket_session
         return static_cast<Derived&>(*this);
     }
 
-    boost::beast::multi_buffer buffer_;
+    beast::multi_buffer buffer_;
     char ping_state_ = 0;
 
 protected:
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
-    boost::asio::steady_timer timer_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
+    asio::steady_timer timer_;
 
 public:
     // Construct the session
     explicit
-    websocket_session(boost::asio::io_context& ioc)
+    websocket_session(asio::io_context& ioc)
         : strand_(ioc.get_executor())
         , timer_(ioc,
             (std::chrono::steady_clock::time_point::max)())
@@ -276,7 +276,7 @@ public:
         // Accept the websocket handshake
         derived().ws().async_accept(
             req,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &websocket_session::on_accept,
@@ -285,10 +285,10 @@ public:
     }
 
     void
-    on_accept(boost::system::error_code ec)
+    on_accept(std::error_code ec)
     {
         // Happens when the timer closes the socket
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -300,9 +300,9 @@ public:
 
     // Called when the timer expires.
     void
-    on_timer(boost::system::error_code ec)
+    on_timer(std::error_code ec)
     {
-        if(ec && ec != boost::asio::error::operation_aborted)
+        if(ec && ec != asio::error::operation_aborted)
             return fail(ec, "timer");
 
         // See if the timer really expired since the deadline may have moved.
@@ -320,7 +320,7 @@ public:
 
                 // Now send the ping
                 derived().ws().async_ping({},
-                    boost::asio::bind_executor(
+                    asio::bind_executor(
                         strand_,
                         std::bind(
                             &websocket_session::on_ping,
@@ -340,7 +340,7 @@ public:
 
         // Wait on the timer
         timer_.async_wait(
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &websocket_session::on_timer,
@@ -361,10 +361,10 @@ public:
 
     // Called after a ping is sent.
     void
-    on_ping(boost::system::error_code ec)
+    on_ping(std::error_code ec)
     {
         // Happens when the timer closes the socket
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -387,7 +387,7 @@ public:
     void
     on_control_callback(
         websocket::frame_type kind,
-        boost::beast::string_view payload)
+        beast::string_view payload)
     {
         boost::ignore_unused(kind, payload);
 
@@ -401,7 +401,7 @@ public:
         // Read a message into our buffer
         derived().ws().async_read(
             buffer_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &websocket_session::on_read,
@@ -412,13 +412,13 @@ public:
 
     void
     on_read(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
 
         // Happens when the timer closes the socket
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         // This indicates that the websocket_session was closed
@@ -435,7 +435,7 @@ public:
         derived().ws().text(derived().ws().got_text());
         derived().ws().async_write(
             buffer_.data(),
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &websocket_session::on_write,
@@ -446,13 +446,13 @@ public:
 
     void
     on_write(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
 
         // Happens when the timer closes the socket
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -518,7 +518,7 @@ public:
         // Close the WebSocket Connection
         ws_.async_close(
             websocket::close_code::normal,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &plain_websocket_session::on_close,
@@ -527,10 +527,10 @@ public:
     }
 
     void
-    on_close(boost::system::error_code ec)
+    on_close(std::error_code ec)
     {
         // Happens when close times out
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -545,15 +545,15 @@ class ssl_websocket_session
     : public websocket_session<ssl_websocket_session>
     , public std::enable_shared_from_this<ssl_websocket_session>
 {
-    websocket::stream<boost::beast::ssl_stream<tcp::socket>> ws_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
+    websocket::stream<beast::ssl_stream<tcp::socket>> ws_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
     bool eof_ = false;
 
 public:
     // Create the http_session
     explicit
-    ssl_websocket_session(boost::beast::ssl_stream<tcp::socket> stream)
+    ssl_websocket_session(beast::ssl_stream<tcp::socket> stream)
         : websocket_session<ssl_websocket_session>(
             stream.get_executor().context())
         , ws_(std::move(stream))
@@ -562,7 +562,7 @@ public:
     }
 
     // Called by the base class
-    websocket::stream<boost::beast::ssl_stream<tcp::socket>>&
+    websocket::stream<beast::ssl_stream<tcp::socket>>&
     ws()
     {
         return ws_;
@@ -591,7 +591,7 @@ public:
 
         // Perform the SSL shutdown
         ws_.next_layer().async_shutdown(
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &ssl_websocket_session::on_shutdown,
@@ -600,10 +600,10 @@ public:
     }
 
     void
-    on_shutdown(boost::system::error_code ec)
+    on_shutdown(std::error_code ec)
     {
         // Happens when the shutdown times out
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -640,7 +640,7 @@ make_websocket_session(
 template<class Body, class Allocator>
 void
 make_websocket_session(
-    boost::beast::ssl_stream<tcp::socket> stream,
+    beast::ssl_stream<tcp::socket> stream,
     http::request<Body, http::basic_fields<Allocator>> req)
 {
     std::make_shared<ssl_websocket_session>(
@@ -736,7 +736,7 @@ class http_session
                     http::async_write(
                         self_.derived().stream(),
                         msg_,
-                        boost::asio::bind_executor(
+                        asio::bind_executor(
                             self_.strand_,
                             std::bind(
                                 &http_session::on_write,
@@ -761,16 +761,16 @@ class http_session
     queue queue_;
 
 protected:
-    boost::asio::steady_timer timer_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
-    boost::beast::flat_buffer buffer_;
+    asio::steady_timer timer_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
+    beast::flat_buffer buffer_;
 
 public:
     // Construct the session
     http_session(
-        boost::asio::io_context& ioc,
-        boost::beast::flat_buffer buffer,
+        asio::io_context& ioc,
+        beast::flat_buffer buffer,
         std::shared_ptr<std::string const> const& doc_root)
         : doc_root_(doc_root)
         , queue_(*this)
@@ -796,7 +796,7 @@ public:
             derived().stream(),
             buffer_,
             req_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &http_session::on_read,
@@ -806,9 +806,9 @@ public:
 
     // Called when the timer expires.
     void
-    on_timer(boost::system::error_code ec)
+    on_timer(std::error_code ec)
     {
-        if(ec && ec != boost::asio::error::operation_aborted)
+        if(ec && ec != asio::error::operation_aborted)
             return fail(ec, "timer");
 
         // Verify that the timer really expired since the deadline may have moved.
@@ -817,7 +817,7 @@ public:
 
         // Wait on the timer
         timer_.async_wait(
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &http_session::on_timer,
@@ -826,10 +826,10 @@ public:
     }
 
     void
-    on_read(boost::system::error_code ec)
+    on_read(std::error_code ec)
     {
         // Happens when the timer closes the socket
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         // This means they closed the connection
@@ -857,10 +857,10 @@ public:
     }
 
     void
-    on_write(boost::system::error_code ec, bool close)
+    on_write(std::error_code ec, bool close)
     {
         // Happens when the timer closes the socket
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -888,14 +888,14 @@ class plain_http_session
     , public std::enable_shared_from_this<plain_http_session>
 {
     tcp::socket socket_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
 
 public:
     // Create the http_session
     plain_http_session(
         tcp::socket socket,
-        boost::beast::flat_buffer buffer,
+        beast::flat_buffer buffer,
         std::shared_ptr<std::string const> const& doc_root)
         : http_session<plain_http_session>(
             socket.get_executor().context(),
@@ -926,8 +926,8 @@ public:
     {
         // Make sure we run on the strand
         if(! strand_.running_in_this_thread())
-            return boost::asio::post(
-                boost::asio::bind_executor(
+            return asio::post(
+                asio::bind_executor(
                     strand_,
                     std::bind(
                         &plain_http_session::run,
@@ -944,7 +944,7 @@ public:
     do_eof()
     {
         // Send a TCP shutdown
-        boost::system::error_code ec;
+        std::error_code ec;
         socket_.shutdown(tcp::socket::shutdown_send, ec);
 
         // At this point the connection is closed gracefully
@@ -954,8 +954,8 @@ public:
     do_timeout()
     {
         // Closing the socket cancels all outstanding operations. They
-        // will complete with boost::asio::error::operation_aborted
-        boost::system::error_code ec;
+        // will complete with asio::error::operation_aborted
+        std::error_code ec;
         socket_.shutdown(tcp::socket::shutdown_both, ec);
         socket_.close(ec);
     }
@@ -966,9 +966,9 @@ class ssl_http_session
     : public http_session<ssl_http_session>
     , public std::enable_shared_from_this<ssl_http_session>
 {
-    boost::beast::ssl_stream<tcp::socket> stream_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
+    beast::ssl_stream<tcp::socket> stream_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
     bool eof_ = false;
 
 public:
@@ -976,7 +976,7 @@ public:
     ssl_http_session(
         tcp::socket socket,
         ssl::context& ctx,
-        boost::beast::flat_buffer buffer,
+        beast::flat_buffer buffer,
         std::shared_ptr<std::string const> const& doc_root)
         : http_session<ssl_http_session>(
             socket.get_executor().context(),
@@ -988,14 +988,14 @@ public:
     }
 
     // Called by the base class
-    boost::beast::ssl_stream<tcp::socket>&
+    beast::ssl_stream<tcp::socket>&
     stream()
     {
         return stream_;
     }
 
     // Called by the base class
-    boost::beast::ssl_stream<tcp::socket>
+    beast::ssl_stream<tcp::socket>
     release_stream()
     {
         return std::move(stream_);
@@ -1007,8 +1007,8 @@ public:
     {
         // Make sure we run on the strand
         if(! strand_.running_in_this_thread())
-            return boost::asio::post(
-                boost::asio::bind_executor(
+            return asio::post(
+                asio::bind_executor(
                     strand_,
                     std::bind(
                         &ssl_http_session::run,
@@ -1026,7 +1026,7 @@ public:
         stream_.async_handshake(
             ssl::stream_base::server,
             buffer_.data(),
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &ssl_http_session::on_handshake,
@@ -1036,11 +1036,11 @@ public:
     }
     void
     on_handshake(
-        boost::system::error_code ec,
+        std::error_code ec,
         std::size_t bytes_used)
     {
         // Happens when the handshake times out
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -1062,7 +1062,7 @@ public:
 
         // Perform the SSL shutdown
         stream_.async_shutdown(
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &ssl_http_session::on_shutdown,
@@ -1071,10 +1071,10 @@ public:
     }
 
     void
-    on_shutdown(boost::system::error_code ec)
+    on_shutdown(std::error_code ec)
     {
         // Happens when the shutdown times out
-        if(ec == boost::asio::error::operation_aborted)
+        if(ec == asio::error::operation_aborted)
             return;
 
         if(ec)
@@ -1105,10 +1105,10 @@ class detect_session : public std::enable_shared_from_this<detect_session>
 {
     tcp::socket socket_;
     ssl::context& ctx_;
-    boost::asio::strand<
-        boost::asio::io_context::executor_type> strand_;
+    asio::strand<
+        asio::io_context::executor_type> strand_;
     std::shared_ptr<std::string const> doc_root_;
-    boost::beast::flat_buffer buffer_;
+    beast::flat_buffer buffer_;
 
 public:
     explicit
@@ -1130,7 +1130,7 @@ public:
         async_detect_ssl(
             socket_,
             buffer_,
-            boost::asio::bind_executor(
+            asio::bind_executor(
                 strand_,
                 std::bind(
                     &detect_session::on_detect,
@@ -1141,7 +1141,7 @@ public:
     }
 
     void
-    on_detect(boost::system::error_code ec, boost::tribool result)
+    on_detect(std::error_code ec, boost::tribool result)
     {
         if(ec)
             return fail(ec, "detect");
@@ -1175,7 +1175,7 @@ class listener : public std::enable_shared_from_this<listener>
 
 public:
     listener(
-        boost::asio::io_context& ioc,
+        asio::io_context& ioc,
         ssl::context& ctx,
         tcp::endpoint endpoint,
         std::shared_ptr<std::string const> const& doc_root)
@@ -1184,7 +1184,7 @@ public:
         , socket_(ioc)
         , doc_root_(doc_root)
     {
-        boost::system::error_code ec;
+        std::error_code ec;
 
         // Open the acceptor
         acceptor_.open(endpoint.protocol(), ec);
@@ -1195,7 +1195,7 @@ public:
         }
 
         // Allow address reuse
-        acceptor_.set_option(boost::asio::socket_base::reuse_address(true), ec);
+        acceptor_.set_option(asio::socket_base::reuse_address(true), ec);
         if(ec)
         {
             fail(ec, "set_option");
@@ -1212,7 +1212,7 @@ public:
 
         // Start listening for connections
         acceptor_.listen(
-            boost::asio::socket_base::max_listen_connections, ec);
+            asio::socket_base::max_listen_connections, ec);
         if(ec)
         {
             fail(ec, "listen");
@@ -1241,7 +1241,7 @@ public:
     }
 
     void
-    on_accept(boost::system::error_code ec)
+    on_accept(std::error_code ec)
     {
         if(ec)
         {
@@ -1274,13 +1274,13 @@ int main(int argc, char* argv[])
             "    advanced-server-flex 0.0.0.0 8080 . 1\n";
         return EXIT_FAILURE;
     }
-    auto const address = boost::asio::ip::make_address(argv[1]);
+    auto const address = asio::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const doc_root = std::make_shared<std::string>(argv[3]);
     auto const threads = std::max<int>(1, std::atoi(argv[4]));
 
     // The io_context is required for all I/O
-    boost::asio::io_context ioc{threads};
+    asio::io_context ioc{threads};
 
     // The SSL context is required, and holds certificates
     ssl::context ctx{ssl::context::sslv23};
@@ -1296,9 +1296,9 @@ int main(int argc, char* argv[])
         doc_root)->run();
 
     // Capture SIGINT and SIGTERM to perform a clean shutdown
-    boost::asio::signal_set signals(ioc, SIGINT, SIGTERM);
+    asio::signal_set signals(ioc, SIGINT, SIGTERM);
     signals.async_wait(
-        [&](boost::system::error_code const&, int)
+        [&](std::error_code const&, int)
         {
             // Stop the `io_context`. This will cause `run()`
             // to return immediately, eventually destroying the

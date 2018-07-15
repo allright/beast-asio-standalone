@@ -8,18 +8,17 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/experimental/http/icy_stream.hpp>
+#include <beast/experimental/http/icy_stream.hpp>
 
-#include <boost/beast/core/buffers_adapter.hpp>
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/read_size.hpp>
-#include <boost/beast/experimental/test/stream.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_adapter.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/read_size.hpp>
+#include <beast/experimental/test/stream.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <array>
 #include <memory>
 #include <string>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -30,8 +29,8 @@ public:
     void
     doMatrix(string_view in, string_view out)
     {
-        using boost::asio::mutable_buffer;
-        boost::asio::io_context ioc;
+        using asio::mutable_buffer;
+        asio::io_context ioc;
         auto len = out.size() + 8;
         std::unique_ptr<char[]> p(new char[len]);
         for(std::size_t i = 1; i < len; ++i)
@@ -62,7 +61,7 @@ public:
                                 break;
                         }
                         if(! BEAST_EXPECTS(
-                            ec == boost::asio::error::eof, ec.message()))
+                            ec == asio::error::eof, ec.message()))
                             continue;
                         auto const s = buffers_to_string(ba.data());
                         BEAST_EXPECTS(s == out, s);
@@ -93,7 +92,7 @@ public:
                                 break;
                         }
                         if(! BEAST_EXPECTS(
-                            ec == boost::asio::error::eof, ec.message()))
+                            ec == asio::error::eof, ec.message()))
                             continue;
                         auto const s = buffers_to_string(ba.data());
                         if(! BEAST_EXPECTS(s == out, s))
@@ -124,4 +123,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,icy_stream);
 
 } // http
 } // beast
-} // boost

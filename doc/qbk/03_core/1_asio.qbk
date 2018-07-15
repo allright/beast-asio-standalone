@@ -39,21 +39,21 @@ special meaning:
     [@boost:/doc/html/boost_asio/reference/ip__tcp/socket.html [*`sock`]]
 ][
     A variable of type
-    [@boost:/doc/html/boost_asio/reference/ip__tcp/socket.html `boost::asio::ip::tcp::socket`]
+    [@boost:/doc/html/boost_asio/reference/ip__tcp/socket.html `asio::ip::tcp::socket`]
     which has already been connected to a remote host.
 ]]
 [[
     [@boost:/doc/html/boost_asio/reference/ssl__stream.html [*`ssl_sock`]]
 ][
     A variable of type
-    [@boost:/doc/html/boost_asio/reference/ssl__stream.html `boost::asio::ssl::stream<boost::asio::ip::tcp::socket>`]
+    [@boost:/doc/html/boost_asio/reference/ssl__stream.html `asio::ssl::stream<asio::ip::tcp::socket>`]
     which is already connected and has handshaked with a remote host.
 ]]
 [[
     [link beast.ref.boost__beast__websocket__stream [*`ws`]]
 ][
     A variable of type
-    [link beast.ref.boost__beast__websocket__stream `websocket::stream<boost::asio::ip::tcp::socket>`]
+    [link beast.ref.boost__beast__websocket__stream `websocket::stream<asio::ip::tcp::socket>`]
     which is already connected with a remote host.
 ]]
 ]

@@ -8,19 +8,18 @@
 //
 
 // Test that header file is self-contained.
-#include <boost/beast/http/chunk_encode.hpp>
+#include <beast/http/chunk_encode.hpp>
 
 #include "message_fuzz.hpp"
 
-#include <boost/beast/core/buffers_to_string.hpp>
-#include <boost/beast/core/static_string.hpp>
-#include <boost/beast/http/fields.hpp>
-#include <boost/beast/test/fuzz.hpp>
-#include <boost/beast/unit_test/suite.hpp>
+#include <beast/core/buffers_to_string.hpp>
+#include <beast/core/static_string.hpp>
+#include <beast/http/fields.hpp>
+#include <beast/test/fuzz.hpp>
+#include <beast/unit_test/suite.hpp>
 #include <boost/optional.hpp>
 #include <random>
 
-namespace boost {
 namespace beast {
 namespace http {
 
@@ -60,7 +59,7 @@ public:
         BEAST_EXPECT(buffers_to_string(t3) == match);
     }
 
-    using cb_t = boost::asio::const_buffer;
+    using cb_t = asio::const_buffer;
 
     static
     cb_t
@@ -295,4 +294,3 @@ BEAST_DEFINE_TESTSUITE(beast,http,chunk_encode);
 
 } // http
 } // beast
-} // boost

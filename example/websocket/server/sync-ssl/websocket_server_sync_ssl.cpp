@@ -15,20 +15,20 @@
 
 #include "example/common/server_certificate.hpp"
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ssl/stream.hpp>
+#include <beast/core.hpp>
+#include <beast/websocket.hpp>
+#include <beast/websocket/ssl.hpp>
+#include <asio/ip/tcp.hpp>
+#include <asio/ssl/stream.hpp>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <thread>
 
-using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
-namespace ssl = boost::asio::ssl;               // from <boost/asio/ssl.hpp>
-namespace websocket = boost::beast::websocket;  // from <boost/beast/websocket.hpp>
+using tcp = asio::ip::tcp;               // from <asio/ip/tcp.hpp>
+namespace ssl = asio::ssl;               // from <asio/ssl.hpp>
+namespace websocket = beast::websocket;  // from <beast/websocket.hpp>
 
 //------------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ do_session(tcp::socket& socket, ssl::context& ctx)
         for(;;)
         {
             // This buffer will hold the incoming message
-            boost::beast::multi_buffer buffer;
+            beast::multi_buffer buffer;
 
             // Read a message
             ws.read(buffer);
@@ -60,7 +60,7 @@ do_session(tcp::socket& socket, ssl::context& ctx)
             ws.write(buffer.data());
         }
     }
-    catch(boost::system::system_error const& se)
+    catch(std::system_error const& se)
     {
         // This indicates that the session was closed
         if(se.code() != websocket::error::closed)
@@ -87,11 +87,11 @@ int main(int argc, char* argv[])
                 "    websocket-server-sync-ssl 0.0.0.0 8080\n";
             return EXIT_FAILURE;
         }
-        auto const address = boost::asio::ip::make_address(argv[1]);
+        auto const address = asio::ip::make_address(argv[1]);
         auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
 
         // The io_context is required for all I/O
-        boost::asio::io_context ioc{1};
+        asio::io_context ioc{1};
 
         // The SSL context is required, and holds certificates
         ssl::context ctx{ssl::context::sslv23};
