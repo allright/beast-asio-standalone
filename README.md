@@ -1,3 +1,12 @@
+This is my private fork of Boost.Beast that is identical to its source in everything but that the all code, including the Asio types, has been removed from the boost namespace so that it can be used with standalone (boostless) Asio without problems.
+
+## Disclaimer
+
+I don't recommend that you use this since the update frequency is going to be smaller from its upstream counterpart.
+Tests and probably other things don't work either, as I've only focused on making the library itself work.
+
+# Original readme
+
 <img width="880" height = "80" alt = "Boost.Beast Title"
     src="https://raw.githubusercontent.com/boostorg/beast/master/doc/images/readme2.png">
 
